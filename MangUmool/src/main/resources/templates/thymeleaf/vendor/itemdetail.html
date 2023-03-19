@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ItemDetail</title>
+<style>
+body{width:100%;}
+li{list-style:none;}
+#ititle{float:left; line-height:24px;}
+#itext{line-height:24px;}
+h1{
+	color:#465578;
+	margin:0;
+	padding-bottom:50px;
+}
+#detailItem{margin:auto; width:1200px; padding-top:30px;}
+</style>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+$(function(){
+	$('#itemEditForm').css('display','none');	
+	$('.delbttn').css('display','none');
+	$('#addimgsform').css('display','none');
+	
+})
+
+function showEditForm()
+{
+	$('#detailInfo').css('display','none');
+	$('#itemEditForm').css('display','');	
+}
+
+function showInfo()
+{
+	$('#itemEditForm').css('display','none');
+	$('#detailInfo').css('display','');
+}
+
+function delbtnon()
+{
+	$('.delbttn').css('display','');
+}
+
+function addimgon()
+{
+	$('#addimgsform').css('display','');
+}
+
+
+
+
+function editInfo()
+{			
+	var serData = $('#editForm').serialize(); 
+	alert(serData);
+
+	$.ajax({
+			url : '/vendor/updateItem',	
+			method : 'post',
+			data : serData,  											
+			cache : false,       	
+			dataType:'json',                      
+			success : function(res)                
+			{					
+				
+				if(res.updated)
+				{
+					location.reload;
+					alert(res.msg);   
+				}
+				else
+				{
+					alert(res.msg);
+				}
+			},
+			error : function(xhr,status,err)
+			{
+				alert(err);	
+			}
+			});		
+	}
+
+
+function addimage()
+{
+	var form = $('#addimgsform')[0]
+    var data = new FormData(form);
+	
+	$.ajax({
+			url : '/vendor/addimg',	
+			method : 'post',
+			enctype: 'multipart/form-data',
+			data : data,  											
+			cache : false,		
+			dataType:'json',        
+			processData: false,  
+		    contentType: false,
+			success : function(res)                
+			{									
+				alert(res.msg);
+				location.reload();
+								
+			},
+			error : function(xhr,status,err)
+			{
+				alert(err);	
+			}
+			});
+}
+
+function delimg(ianum)
+{			
+	var iname = $('#iname'+ianum).val();				
+	var fname = $('#fname'+ianum).val();		
+
+	var data = {};
+	data.name = iname;
+	data.fname = fname;
+	data.ianum = ianum;
+
+	$.ajax({
+			url : '/vendor/delimg',	
+			method : 'post',
+			data : data,  											
+			cache : false,		
+			dataType:'json',                      
+			success : function(res)                
+			{		
+				if(res.deleted)
+				{							
+					location.reload();
+				}
+				else
+				{
+					alert(res.msg);
+				}				
+			},
+			error : function(xhr,status,err)
+			{
+				alert(err);	
+			}
+			});			
+}	
+$(function(){
+$("input[type='file']").change(function(e){
+	
+    $('#preview').empty();
+
+    var files = e.target.files;
+    var arr =Array.prototype.slice.call(files);
+    
+    for(var i=0;i<files.length;i++){
+      if(!checkExtension(files[i].name,files[i].size)){
+        return false;
+      }
+    }     
+    preview(arr);         
+  });
+  
+  function checkExtension(fileName,fileSize){
+
+    var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+    var maxSize = 20971520;
+    
+    if(fileSize >= maxSize){
+      alert('파일 사이즈 초과');
+      $("input[type='file']").val("");
+      return false;
+    }
+    
+    if(regex.test(fileName)){
+      alert('업로드 불가능한 파일이 있습니다.');
+      $("input[type='file']").val("");
+      return false;
+    }
+    return true;
+  }
+  
+  function preview(arr){
+    arr.forEach(function(f){
+      
+      var fileName = f.name;
+      if(fileName.length > 10){
+        fileName = fileName.substring(0,7)+"...";
+      }
+      
+      var str = '<div style="display: inline-flex; padding: 10px;"><li style="list-style:none;">';
+      str += '<span>'+fileName+'</span><br>';
+      
+      if(f.type.match('image.*')){
+        var reader = new FileReader(); 
+        reader.onload = function (e) {           
+          str += '<img src="'+e.target.result+'" title="'+f.name+'" width=150 height=100 />';
+          str += '</li></div>';
+          $(str).appendTo('#preview');
+        } 
+        reader.readAsDataURL(f);
+      }else{
+        str += '<img src="/resources/img/fileImg.png" title="'+f.name+'" width=150 height=100 />';
+        $(str).appendTo('#preview');
+      }
+    });
+  }
+});
+
+
+</script>
+</head>
+<body>
+<div th:include="@{/fragments/vendorNavi.html}"></div>
+<div id="detailItem">	
+	<h1 style="text-align:center;">제품 상세정보</h1>
+	<div id="detailInfo" style="width:500px; margin:auto; border:1px solid gray; border-radius:0.3em; padding-bottom:40px;">
+	
+		<ul id='ititle'>
+			<li class='infotitle'><label>ITEMCODE</label></li>
+			<li class='infotitle'><label>상품명</label></li>
+			<li class='infotitle'><label>브랜드명</label></li>
+			<li class='infotitle'><label>현재수량</label></li>
+			<li class='infotitle'><label>주종</label></li>
+			<li class='infotitle'><label>도수</label></li>
+			<li class='infotitle'><label>가격</label></li>
+			<li class='infotitle'><label>원산지</label></li>
+			<li class='infotitle'><label>주원료</label></li>
+			<li class='infotitle'><label>상품등록일</label></li>
+			<li class='infotitle'><label>상품정보</label></li>
+			<li class='infotitle'><label>리뷰평점</label></li>
+		</ul>
+		<ul id='itext'>
+			<li class='infotext'><span th:text="${items.item.itemcode}"></span></li>
+			<li class='infotext'><span th:text="${items.item.name}"></span></li>
+			<li class='infotext'><span th:text="${items.item.brandname}"></span></li>
+			<li class='infotext'><span th:text="${items.item.quantity}"></span></li>
+			<li class='infotext'><span th:text="${items.item.type}"></span></li>
+			<li class='infotext'><span th:text="${items.item.alcohol}"></span></li>
+			<li class='infotext'><span th:text="${items.item.price}"></span></li>
+			<li class='infotext'><span th:text="${items.item.producingarea}"></span></li>
+			<li class='infotext'><span th:text="${items.item.material}"></span></li>
+			<li class='infotext'><span th:text="${items.item.regdate}"></span></li>
+			<li class='infotext'><span th:text="${items.item.detailcontent}"></span></li> 
+			<li class='infotext'><span th:if=${items.avg} th:text="${items.avg}"></span></li>
+			<li class='infotext'><span th:unless=${items.avg} th:text="'등록된 리뷰가 없습니다.'"></span></li>
+		</ul>
+		<div style="text-align:center; margin-top:20px;" >
+			<button type="button" onclick="showEditForm()">수정</button>
+		</div>
+	</div>
+	
+	
+	
+	<div id="itemEditForm" style="width:500px; margin:auto;  border:1px solid gray; border-radius:0.3em; padding-bottom:40px;">	
+		<ul id='ititle' >
+			<li class='infotitle'><label>ITEMCODE</label></li>
+			<li class='infotitle'><label>상품명</label></li>
+			<li class='infotitle'><label>브랜드명</label></li>
+			<li class='infotitle'><label>현재수량</label></li>
+			<li class='infotitle'><label>주종</label></li>
+			<li class='infotitle'><label>도수</label></li>
+			<li class='infotitle'><label>가격</label></li>
+			<li class='infotitle'><label>원산지</label></li>
+			<li class='infotitle'><label>주원료</label></li>
+			<li class='infotitle'><label>상품등록일</label></li>
+			<li class='infotitle'><label>상품정보</label></li>
+		</ul>
+			
+		<form id="editForm">		
+			<ul id='itext' style="line-height:24px;">
+				<li class='infotext'><span th:text="${items.item.itemcode}"></span><input type='hidden' name='itemcode' th:value='${items.item.itemcode}'></li>
+				<li class='infotext'><span th:text="${items.item.name}"></span></li>
+				<li class='infotext'><span th:text="${items.item.brandname}"></span></li>
+				<li class='infotext'><input type='number' name='quantity' th:value="${items.item.quantity}"></span></li>
+				<li class='infotext'><span th:text="${items.item.type}"></span></li>
+				<li class='infotext'><input type='number' step='0.01' name='alcohol' th:value="${items.item.alcohol}"></span></li>
+				<li class='infotext'><input type='number' name='price' th:value="${items.item.price}"></span></li>
+				<li class='infotext'><input type='text' name='producingarea' th:value="${items.item.producingarea}"></span></li>
+				<li class='infotext'><span th:text="${items.item.material}"></span></li>
+				<li class='infotext'><span th:text="${items.item.regdate}"></span></li>
+				<li class='infotext'><input type='text' name='detailcontent' th:value="${items.item.detailcontent}"></span></li> 
+			</ul>	
+		</form>
+		<div style="text-align:center; margin-top:20px;" >
+			<button type="button" onclick="editInfo()">정보수정</button>
+			<button type="button" onclick="showInfo()">상세보기</button>
+		</div>
+	</div>
+	<div style="text-align:center ; margin-top:50px; margin-bottom : 50px;">
+		<button id='addimgbtn' onclick='addimgon();'>사진추가</button>　
+		<button id='delimgbtn' onclick='delbtnon();'>사진삭제</button> <p>
+	</div>
+	
+	<form id='addimgsform' style='border:1px solid #78ADA7;  width:600px; margin:auto; margin-bottom:50px; padding:20px;'>
+				<input type='hidden' name='itemcode' th:value='${items.item.itemcode}'>
+				<input type='hidden' name='name' th:value='${items.item.name}'>
+				첨부사진 <input type="file" name="ifiles" id='ifiles' multiple="multiple"><br>
+				썸네일 사진 <input type="file" name="thumimg"><br>
+			<div id="preview"></div><p>
+			<button type='button' onclick='addimage();'>사진전송</button>		
+	</form> 
+	
+	<div style="width:700px;margin:auto; margin-bottom:50px; height:500px;">
+		<div style="border-bottom:5px double gray; width:200px; margin:auto; margin-bottom:50px; margin-top:50px; ">썸네일사진</div>
+		<div th:if="${items.thumatt.fname!=null}" style="margin:auto; width: 300px;"> 
+			<img style="width:150px; height:150px;"  th:src="@{'/'+${items.item.name}+'/'+${items.thumatt.fname}}">
+				<form th:class='imginfo+${items.thumatt.ianum}'>
+					<input type='hidden' name='fname' th:id='fname+${items.thumatt.ianum}' th:value='${items.thumatt.fname}'>		
+					<input type='hidden' name='iname' th:id='iname+${items.thumatt.ianum}' th:value='${items.item.name}'>		
+					<button type='button' class='delbttn' th:onclick='|delimg(${items.thumatt.ianum});|'>Ｘ</button>
+				</form>	
+		</div>
+		<div th:unless="${items.thumatt.fname!=null}">
+				<span th:text="'썸네일 사진이 없습니다.'" ></span><br>		
+		</div>
+		<div style="border-bottom:5px double gray; width:200px;  margin:auto; margin-bottom:50px; margin-top:50px;  ">첨부사진</div>
+		<div th:if="${items.item.imgList!=null}" th:each="i : ${items.item.imgList}" style="margin:auto; text-align:center; float:left;">
+			 <img style="width:150px; height:150px;" th:src="@{'/'+${items.item.name}+'/'+${i.fname}}">
+				<form th:class='imginfo+${i.ianum}'>
+					<input type='hidden' name='fname' th:id='fname+${i.ianum}' th:value='${i.fname}'>
+					<input type='hidden' name='iname' th:id='iname+${i.ianum}' th:value='${items.item.name}'>				
+					<button type='button' class='delbttn' th:onclick='|delimg(${i.ianum});|'>Ｘ</button>
+				</form>	
+		</div>
+		<div th:unless="${items.item.imgList!=null}">
+			<span th:text="'첨부한 사진이 없습니다.'" ></span><br>	
+		</div>	
+	</div>
+</div>
+</body>
+</html>

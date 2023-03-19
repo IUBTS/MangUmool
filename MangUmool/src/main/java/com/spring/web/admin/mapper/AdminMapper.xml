@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.web.admin.mapper.AdminMapper">
+
+	<insert id='join'
+				parameterType='com.spring.web.admin.vo.Admin'>
+				
+		INSERT INTO TRADI_ADMIN(ADNUM,AID,PWD)
+		VALUES(ADMIN_SEQ.NEXTVAL,#{aid},#{pwd})	
+				
+	</insert>
+
+	<select id="login"
+			parameterType="com.spring.web.admin.vo.Admin"
+			resultType='com.spring.web.admin.vo.Admin'>
+					SELECT ADNUM,AID,PWD FROM TRADI_ADMIN WHERE AID=#{aid} AND PWD=#{pwd}	
+	</select>		
+
+
+	<select id="postRequested"
+			resultType="com.spring.web.vendor.vo.Items">
+	
+		SELECT * FROM TRADI_ITEMS WHERE POST=0 
+			
+	</select>
+	
+	<update id="postItems"
+			parameterType="Integer">
+			
+		UPDATE TRADI_ITEMS
+		SET POST=1
+		WHERE ITEMCODE = #{itemcode}		
+			
+	</update>
+	
+	<select id="getNewVendorJoin"
+			resultType="com.spring.web.vendor.vo.Vendor">
+	
+		SELECT * FROM TRADI_VENDOR 
+		WHERE PERMIT = 1
+	
+	</select>
+	
+	
+	<update id="vendorJoinPermit"
+			parameterType="Integer">
+			
+		UPDATE TRADI_VENDOR
+		SET PERMIT = 2
+		WHERE vnum = #{vnum}		
+			
+	</update>
+	
+	
+	<select id="findUserByID"
+			parameterType="String"
+			resultType="com.spring.web.customer.vo.Customer">
+		
+		SELECT * FROM TRADI_CUSTOMER
+		WHERE CID=#{cid}
+	
+	</select>
+		
+	<select id="findVendorByID"
+			parameterType="String"
+			resultType="com.spring.web.vendor.vo.Vendor">
+		
+		SELECT * FROM TRADI_VENDOR 
+		WHERE VID=#{vid}		
+	
+	</select>
+	
+	<select id="findOrderByOinum"
+			parameterType="Integer"
+			resultType="map">	
+	
+		SELECT * FROM TRADI_ORDERITEM a 
+		LEFT OUTER JOIN TRADI_ORDER b
+		ON a.onum=b.onum
+		WHERE a.OINUM = #{oinum}
+		
+	</select>
+	
+	<select id="findByCancleList"
+			parameterType="map"
+			resultType="hashmap">
+	
+		SELECT a.*,b.* FROM TRADI_ORDERITEM a
+		LEFT OUTER JOIN TRADI_ORDER b
+		ON a.onum=b.onum
+		LEFT OUTER JOIN TRADI_ITEMS c
+		ON a.itemcode=c.itemcode
+		LEFT OUTER JOIN TRADI_VENDOR v
+		ON c.vnum=v.vnum
+		WHERE v.vid = #{vid}
+		AND a.confirm=4
+		AND <![CDATA[b.orderdate>=#{start}]]>
+		AND <![CDATA[b.orderdate<=#{end}]]>
+		
+	</select>	
+
+		<select id="findByOrderList"
+			parameterType="map"
+			resultType="hashmap">
+	
+		SELECT a.*,b.* FROM TRADI_ORDERITEM a
+		LEFT OUTER JOIN TRADI_ORDER b
+		ON a.onum=b.onum
+		LEFT OUTER JOIN TRADI_ITEMS c
+		ON a.itemcode=c.itemcode
+		LEFT OUTER JOIN TRADI_VENDOR v
+		ON c.vnum=v.vnum
+		WHERE v.vid = #{vid}
+		AND <![CDATA[a.confirm<=3]]>
+		AND <![CDATA[b.orderdate>=#{start}]]>
+		AND <![CDATA[b.orderdate<=#{end}]]>
+		
+	</select>	
+
+
+
+
+
+
+
+</mapper>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+</head>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	
+$(function(){
+	var dialogs = document.querySelectorAll(".dialogs");
+	dialogs.forEach(function(dialog) {
+	  dialog.addEventListener("click", function(event) {
+	    if (event.target === dialog) {
+	      dialog.close();
+	    }
+	  });
+	});
+});
+
+	
+	function permitJoinVendor(vnums)
+	{	
+		var vnum = $('#vnum'+vnums).val();             			
+		$.ajax({
+				url : '/admin/joinPermit',	
+				method : 'post',
+				data : {"vnum":vnum},  											
+				cache : false,       		
+				dataType:'json',                      
+				success : function(res)                
+				{					   
+					if(res.apporve)
+					{
+						alert(res.msg);
+						location.reload();
+					}
+					else
+					{
+						alert(res.msg);
+					}
+				},
+				error : function(xhr,status,err)
+				{
+					alert(err);	
+				}
+				});		
+		}
+	
+	function modal(vnum)
+	{
+		const dialog = document.getElementById("dialog"+vnum);
+		dialog.showModal();
+	}
+
+	function closemodal(vnum)
+	{
+		const dialog = document.getElementById("dialog"+vnum);
+		dialog.close();
+	}	
+	
+	
+</script>
+<style>
+#logoBox{ width:110px; margin:auto; margin-top:50px;}
+.dialogs{ width:500px;height:520px; border:8px double black; border-radius:0.8em; }
+.dialogs::backdrop{ backdrop-filter: brightness(50%)  blur(5px);}
+.detail_title,.detail_info{	list-style: none; line-height: 29px; margin-top:0; }
+.detail_title{float:left; margin-left:10px;}
+.detail_info{margin-left:150px;}
+body>h3{margin-bottom:50px; font-size:20px; text-align : center; margin-top:30px;}
+.dialogs>h3{margin-bottom:50px; font-size:20px; text-align : center; margin-top:50px;}
+.btnset {text-align:center; margin-top:50px;}
+.requestList{width:450px; margin: 20px auto; }
+.miniInfo{border:3px double gray; padding: 10px; list-style:none;}
+.detailBtn{float:right; margin-right:30px;  width:100px;}
+#noneList{text-align:center; width:300px; margin:auto; font-size:18px; padding:15px; border:3px dotted gray;}
+</style>
+<body>
+<div id="logoBox">
+	<a href='/admin/main'><img style="width:110px;height:110px" src="/mangwoomul.png"></a>
+</div>
+<h3>판매자 등록 요청 리스트</h3>
+
+
+<div class="requestList" th:unless="${#lists.isEmpty(vendorlist)}" th:each="v : ${vendorlist}">
+	<ul class="miniInfo">
+		<li>
+			<span style="font-weight:bold; font-size:16px; "th:text="${v.vid}+'님 께서 승인 대기중입니다.'"></span>		
+			<button button class="detailBtn" type="button" th:onclick="modal([[${v.vnum}]])">판매자 상세정보</button>		
+		</li>
+	</ul>
+	<dialog class='dialogs' th:id="dialog+${v.vnum}" >
+		<h3 style="text-align:center">판매자 상세보기</h3>
+		<ul class="detail_title">
+			<li><label> 판매자ID </label></li>
+			<li><label> 사업자등록번호 </label></li>
+			<li><label> 회사명 </label></li>
+			<li><label> 대표명 </label></li>
+			<li><label> 회사주소 </label></li>
+			<li><label> 대표전화 </label></li>
+			<li><label> 웹사이트 </label></li>
+		</ul>
+		<ul class="detail_info">
+			<li><span th:text="${v.vid}"></span><li>
+			<li><span th:text="${v.com_number}"></span><li>
+			<li><span th:text="${v.brandname}"></span><li>
+			<li><span th:text="${v.ceoname}"></span><li>
+			<li><span th:text="${v.address}"></span><li>
+			<li><span th:text="${v.phone}"></span><li>
+			<li><span th:text="${v.website}"></span><li>	
+		</ul>	
+		<form>
+			<input type="hidden" th:id="vnum+${v.vnum}" name="vnum" th:value="${v.vnum}">	
+		</form>	
+		<div class="btnset">
+			<button class="close" th:id="close+${v.vnum}" th:onclick="closemodal([[${v.vnum}]])">
+		      닫기
+		    </button>			
+			<button type="button" th:onclick="permitJoinVendor([[${v.vnum}]])">판매자 가입 승인</button>
+		</div>
+	</dialog>
+
+</div>
+<div id="noneList" th:if="${#lists.isEmpty(vendorlist)}">
+	회원가입 요청목록이 없습니다.
+</div>
+<div style="text-align:center; margin-top:30px;">
+	<input type="button" value="BACK" onClick="history.go(-1)"> 
+</div>
+</body>
+</html>

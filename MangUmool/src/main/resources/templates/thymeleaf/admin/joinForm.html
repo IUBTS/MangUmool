@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>JOINFORM</title>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	
+	function join()
+	{			
+		var serData = $('#joinn').serialize();             	
+		
+		alert('오는가');
+		
+		$.ajax({
+				url : '/admin/join',	
+				method : 'post',
+				data : serData,  											
+				cache : false,       
+		
+				dataType:'json',                      
+				success : function(res)                
+				{					
+					alert(res.joined? '추가 성공' : '추가 에러');   
+					if(res.joined)
+					{
+						location.href='/admin/';
+					}
+					else
+					{
+						alert(res.msg);
+					}
+				},
+				error : function(xhr,status,err)
+				{
+					alert(err);	
+				}
+				});		
+		}
+</script>
+</head>
+<body>
+
+
+<form id='joinn' name='joinn'>
+
+<label>ID</label><input type='text' id='aid' name='aid' value='admin'> <p>
+<label>PWD</label><input type='password' id='pwd' name='pwd' value='1234'> <p>
+
+
+<button type='button' onclick='join();'>회원가입</button>
+
+</form>
+</body>
+</html>

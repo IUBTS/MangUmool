@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>VENDORHOME</title>
+<style>
+
+body,html{height: 100vh; width:100%;margin:0; position:relative;  
+	background-color:white}  
+#vendorNav{ height: 100vh; width: 200px; border-right:5px double gray; float:left; background:linear-gradient(to right,#D9E6FF,white);  color:#465578;}
+#vendorNavBar{list-style: none; line-height: 50px; margin-top:50px; padding-left:0px; font-size:17px;}
+
+#vendorNavBar li{padding-left: 20px;   border: 1px outset white;  border-radius: 0.3em; margin:5px;}
+#vendorNavBar a{text-decoration: none;  color:#465578; }
+#vendor_logo_img{ margin-top:20px;}
+#vendor_logo_img a{text-decoration: none;  color:#465578;}
+#vendorNavBar li:hover{
+  text-decoration: none; 
+  color:#465578; 
+  background-color: #FFEEE0; 
+  transition: 0.1s linear;
+  border: 3px outset white;
+  border-radius: 0.3em;
+  font-weight: bold; 
+  font-size:20px;
+  }
+</style>
+</head>
+<body>
+<div id="vendorNav">
+	<div id="vendor_logo_img">
+		<a style="margin-left:40px;" href='/vendor/orderlist'><img style="width:110px;height:110px" src="/mangwoomul.png"></a>	<p>
+		<span style="margin-left:50px; font-size:21px; font-weight:bold;" th:text="${session.vid}+'님'"></span><br>
+		<span style="margin-left:50px; font-size:21px; font-weight:bold;" th:text="'환영합니다'"></span><br>
+		 <span style="margin-left:70px;"><a href='/user/vendor/logout'>LOGOUT</a></span>	
+	</div>
+
+    <ul id="vendorNavBar">                
+        <a href="/vendor/add"><li>상품등록</li></a>
+        <a th:href="${'/'+'vendor/list'}"><li>등록상품 목록</li></a>
+        <a th:href="${'/'+'vendor/orderlist'}"><li>주문요청 목록</li></a>
+        <a th:href="${'/'+'vendor/showCancleList'}"><li>취소요청 목록</li></a>
+        <a th:href="${'/'+'vendor/getQA'}"><li>Q&A목록</li></a>
+    </ul>
+</div>
+
+</body>
+</html>

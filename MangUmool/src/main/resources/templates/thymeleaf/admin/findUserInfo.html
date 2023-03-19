@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>고객 상세정보</title>
+<style>
+	#logoBox{ width:110px; margin:auto; margin-top:50px;}
+	#content{
+	    width:460px;
+	    height:530px; 
+	    margin: auto;
+	    border: 3px dotted slategrey ;
+	    border-radius: 0.8em;
+	    top:30px;
+	    position: relative;
+	    padding:30px;
+	}
+	#emptyContent{
+	 	width:460px;
+	    height:220px; 
+	    margin: auto;
+	    border: 3px dotted slategrey ;
+	    border-radius: 0.8em;
+	    top:30px;
+	    position: relative;
+	    padding:30px;	
+	}
+	ul{padding-left: 40px; list-style: none; float:left; position: relative;}
+	ul>li{border-bottom:1px solid; line-height: 50px;}
+	h1{text-align:center; font-size:28px; font-weight: bold;}
+	#title>li{ width: 80px; }
+	#info>li{ width: 260px; }
+</style>
+</head>
+<body>
+<div id="logoBox">
+	<a href='/admin/main'><img style="width:110px;height:110px" src="/mangwoomul.png"></a>
+</div>
+<div th:if="${cus!=null}">
+	<div id="content">
+	    <h1>고객 정보</h1>
+	    <ul id="title">
+	        <li><label>고객번호</label></li>
+	        <li><label>아이디</label></li>
+	        <li><label>이름</label></li>
+	        <li><label>닉네임</label></li>
+	        <li><label>전화번호</label></li>
+	        <li><label>Email</label></li>
+	        <li><label>주소</label></li>
+	        <li><label>생년월일</label></li>	        
+	    </ul>
+	    <ul id="info">
+	        <li><span th:text="${cus.cnum}"></span></li>
+	        <li><span th:text="${cus.cid}"></span></li>
+	        <li><span th:text="${cus.cname}"></span></li>
+	        <li><span th:text="${cus.nickname}"></span></li>
+	        <li><span th:text="${cus.phone}"></span></li>
+	        <li><span th:text="${cus.email}"></span></li>
+	        <li><span th:text="${cus.address}"></span></li>
+	        <li><span th:text="${cus.birth}"></span></li>	        
+	    </ul>
+	</div>
+</div>
+<div th:unless="${cus!=null}">
+	<div id="emptyContent">
+		<h1>
+			찾으시는 판매자가 없습니다.<br>
+			다시 검색해 주시기 바랍니다.<p>
+		</h1>
+		<div style="width:300px; margin:auto; margin-top:50px;">
+		<h3>고객 아이디 검색하기</h3>
+		<form action="/admin/findUser" method="post">	
+		 주문번호 : <input type="text" name="cid" value="pika">	
+			<button type="submit">검색</button>
+		</form>
+		</div>
+	</div>	
+</div>
+<div style="text-align:center; margin-top:50px;">
+	<input type="button" value="BACK" onClick="history.go(-1)"> 
+</div>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>VENDORLOGIN</title>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	
+	function loginn()
+	{			
+		var serData = $('#loginned').serialize();             	
+
+		$.ajax({
+				url : '/admin/login',	
+				method : 'post',
+				data : serData,  											
+				cache : false,       
+		
+				dataType:'json',                      
+				success : function(res)                
+				{					
+					alert(res.login? "로그인성공" :"로그인실패" );   
+					if(res.login)
+					{
+						location.href='/admin/main';
+					}
+					else
+					{
+						alert('로그인실패');
+						location.href='/admin/login';
+					}
+				},
+				error : function(xhr,status,err)
+				{
+					alert(err);	
+				}
+				});		
+		}
+</script>
+</head>
+<body>
+
+
+<form id='loginned' name='loginned'>
+
+<label>ID</label><input type='text' id='aid' name='aid' value='admin'> <p>
+<label>PWD</label><input type='password' id='pwd' name='pwd' value='1234'> <p>
+
+<button type='button' onclick='loginn();'>로그인</button>
+</form>
+
+
+</body>
+</html>

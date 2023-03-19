@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ORDER</title>
+</head>
+
+<style>
+	
+.detailorder:hover {
+
+	border-radius: 0.8em;
+	box-shadow: 5px 10px 10px 10px #ddd;
+	font-weight: bold;
+	transition: box-shadow 0.5s linear;
+}
+
+.star {
+    position: relative;
+    font-size: 2rem;
+    color: #ddd;
+  }
+  
+  .star input {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+  
+  .star span {
+    width: 0;
+    position: absolute; 
+    left: 0;
+    color: gold;
+    overflow: hidden;
+    pointer-events: none; 
+  }
+
+
+</style>
+
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+
+
+function modal(oinum)
+{
+	const dialog = document.getElementById("dialog"+oinum);
+	dialog.showModal();
+}
+
+function closemodal(oinum)
+{
+	const dialog = document.getElementById("dialog"+oinum);
+	dialog.close();
+}
+
+function writeReview(oinum)
+{
+	var itemcode = $('#itemcode'+oinum).val();
+	var oinum = $('#oinum'+oinum).val();
+	var content = $('#content'+oinum).val();
+	var score = $('#score'+oinum).val();
+	
+	$.ajax({
+		url : '/customer/addreview',	
+		method : 'post',
+		data : {"itemcode":itemcode,"oinum":oinum,"content":content,"score":score},  											
+		cache : false,		
+		dataType:'json',   
+		success : function(res)                
+		{		
+			closemodal(oinum);
+			if(res.reg)
+			{
+				alert(res.msg);
+				location.href='/customer/myorder';
+			}
+							
+		},
+		error : function(xhr,status,err)
+		{
+			alert(err);	
+		}
+		});		
+	
+	
+}
+
+function drawStar(oinum)
+{
+	const score = document.getElementById("score"+oinum);
+	const star = document.getElementById("star"+oinum);
+	star.style.width = `${score.value * 19.1}%`;
+}
+
+</script>
+
+<body>
+<div th:include="@{/fragments/findnavi.html}"></div>
+<div th:include="@{/fragments/searchnavi.html}"></div>
+<div style='width:1200px; height:500px; margin: auto;'>
+
+<div th:each="list:${order}"  style="border-bottom :5px double gray;width:700px; margin-bottom:30px; padding-top:50px; padding-bottom:30px;  margin: auto;" >   
+	<div th:each="l:${list}" style="margin-bottom:20px;">   
+		<span th:if="${lStat.index}==0" th:text=" '주문날짜 : ' + ${l.orderdate} +' 주문번호 : ' + ${l.onum}" style="font-weight:bold; font-size:23px; margin-bottom:10px;"></span><p>		
+		<div class="detailorder" style="margin-top:10px; margin-bottom:10px; padding:20px;">
+			
+			<a th:href="'/drinks/detail/'+${l.orderitem.itemcode}">
+				<img style="width:100px; height:100px;margin-right:50px;" th:src="@{'/'+${l.orderitem.name}+'/'+${l.fname}}">
+				[[${l.orderitem.name}]] [[${l.orderitem.amount}]]개 [[${l.orderitem.price}]]원 
+			</a>
+					<span th:if="${l.orderitem.confirm==0}" th:text="'배송준비중'"></span>
+					<div style="display:inline;" th:if="${l.orderitem.confirm==1}"> 
+						배송출발
+					</div>
+					<div style="display:inline;" th:if="${l.orderitem.confirm==2}"> 
+						배송완료
+					</div>
+					<div style="display:inline; color:blue;" th:if="${l.orderitem.confirm==3}"> 
+						취소신청중
+					</div>
+					<div style="display:inline;" th:if="${l.orderitem.confirm==4}"> 
+						주문취소
+					</div>
+					
+					<form action="/customer/detailorder" method="post" style="float:right;">
+						<input type="hidden" id="oinum" name="oinum" th:value="${l.orderitem.oinum}">
+						<button type="submit">주문내역 상세보기</button>				
+					</form> 
+					<form th:if="${l.orderitem.confirm<3}" action="/customer/cancle" method="post" style="float:right;">
+						<input type="hidden" id="oinum" name="oinum" th:value="${l.orderitem.oinum}">
+						<button type="submit">주문내역 취소/환불</button>				
+					</form>
+				<span th:if="${l.orderitem.confirm==2} and ${l.rcheck}" style="float:right;">
+					<button type="button" th:onclick="modal([[${l.orderitem.oinum}]])">리뷰쓰기</button>					
+					<dialog class='dialogs' th:id="dialog+${l.orderitem.oinum}" >					
+					  <form class='reviewForm'>					  
+						<input type='hidden' th:id='itemcode+${l.orderitem.oinum}' name='itemcode' th:value="${l.orderitem.itemcode}">
+						<input type='hidden' th:id='oinum+${l.orderitem.oinum}' name='oinum' th:value="${l.orderitem.oinum}">
+					    주문번호 : <span th:text="${l.orderitem.oinum}"></span><br>
+			    		상품명 : <span th:text="${l.orderitem.name}"></span><p>
+			    		<span class="star">
+						  ★★★★★
+					 	 <span th:id="star+${l.orderitem.oinum}">★★★★★</span>
+					  	<input type="range" th:id="score+${l.orderitem.oinum}" name='score' th:oninput="drawStar([[${l.orderitem.oinum}]])" value="5" step="1" min="1" max="5">
+						</span><p>
+						
+					    <textarea th:id='content+${l.orderitem.oinum}' name='content' style="width:400px; height:250px;" placeholder="리뷰를 작성해주세요."></textarea>
+					  </form>  
+					  <div>
+					    <button class="close" th:id="close+${l.orderitem.oinum}" th:onclick="closemodal([[${l.orderitem.oinum}]])">
+					      닫기
+					    </button>
+					    <button type="button" th:onclick="writeReview([[${l.orderitem.oinum}]])">
+					      리뷰제출
+					    </button>
+					  </div>					  
+					</dialog>														
+				</span>
+		</div>
+	</div>
+	<p>
+</div>
+<div style="text-align:center; margin:auto; margin-top:40px; padding-bottom:60px; width:400px;">		
+	<span th:if="${end!=0}" style="font-size:32px; padding-left:20px;" th:each="page:${#numbers.sequence(1,end)}">
+		<a style="text-decoration: none; color: gray;" th:href="@{'/customer/myorder'(pg=${page})}">
+			<span th:if="${page}==${pg}" style="color:red;" th:text="${page}"></span>
+			<span th:unless="${page}==${pg}" style="color:gray;" th:text="${page}"></span>				
+		</a>				
+	</span>
+</div>
+</div>
+
+<script>
+
+	var dialogs = document.querySelectorAll(".dialogs");
+	dialogs.forEach(function(dialog) {
+	  dialog.addEventListener("click", function(event) {
+	    if (event.target === dialog) {
+	      dialog.close();
+	    }
+	  });
+	});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>VENDOR JOINFORM</title>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script src="//d1p7wdleee1q2z.cloudfront.net/post/search.min.js"></script>
+<script type="text/javascript">
+	
+	function join()
+	{			
+		var idcheck = $('#idchecked').val();
+		if(idcheck==1)
+		{
+			alert('ID 중복검사를 하셔야 합니다.');	
+			return false;
+		}	
+		var serData = $('#joinn').serialize();             	
+
+		$.ajax({
+				url : '/user/vendor/join',	
+				method : 'post',
+				data : serData,  											
+				cache : false,       
+		
+				dataType:'json',                      
+				success : function(res)                
+				{					
+					alert(res.joined? '회원가입 성공' : '추가 에러');   
+					if(res.joined)
+					{
+						location.href='/user/vendor/waitingJoin';
+					}
+					else
+					{
+						alert(res.msg);
+					}
+				},
+				error : function(xhr,status,err)
+				{
+					alert(err);	
+				}
+				});		
+		}
+	
+	
+	function idCheck()
+    {
+    	var vid = $('#vid').val();
+
+    	$.ajax({
+			url : '/user/vendor/idDupliCheck',	
+			method : 'post',
+			data : {"vid":vid},  											
+			cache : false,       	
+			dataType:'json',                      
+			success : function(res)                
+			{					
+				if(res.checked)
+				{
+					$('#idchecked').val('2');
+					alert(res.msg);
+					 $("#vid").attr("readonly",true); 
+				}
+				else
+				{
+					alert(res.msg);
+				}
+			},
+			error : function(xhr,status,err)
+			{
+				alert(err);	
+			}
+			});		    	
+    }    
+	
+	$(function() { 
+    	$("#postcodify").postcodify({
+        insertPostcode5 : "#postcode",
+        insertAddress : "#addressed",
+        insertDetails : "#details",
+        hideOldAddresses : false        
+    });     	
+    	hidebox();
+    });    
+    
+    function setAddress()
+    {
+    	var postcode = $('#postcode').val();
+    	var addressed = $('#addressed').val();
+    	var details = $('#details').val();
+    	$('#address').val(postcode+' '+addressed+' '+details);
+    }
+
+    function openaddressbox()
+    {
+    	$('#addbox').css('display','');
+    }    
+    
+    function hidebox()
+    {
+    	$('#addbox').css('display','none');
+    }	
+	
+
+</script>
+</head>
+<style>
+
+#vendor_logo_img{width:112px; margin:auto; margin-top:50px;}
+#joinForm{width:400px; height:390px; margin:auto; top:10px; position:relative; border:10px double #3D1B14; 
+				border-radius:0.8em; text-align:center; padding-top:50px;}
+h1{text-align:center; margin-top:-20px;margin-bottom:50px;}
+
+#joinTitle,#joinInput 
+{
+	list-style: none; 
+	line-height: 30px;
+	text-align:left;
+}
+#joinTitle{ float:left;}
+#joinInput{ float:right; margin-right:52px;}
+#joinBtn{position: relative;}
+#vid{width:80px;}
+#address{width:80px; top:10px;}
+
+</style>
+<body>
+<div>
+
+	<div id="vendor_logo_img">
+		<a href='/user/vendor/login'><img style="width:110px;height:110px" src="/mangwoomul.png"></a>	<p>
+	</div>
+
+	<div id="joinForm">
+		<div>
+			<h1>회원가입</h1>		
+			<ul id="joinTitle">
+				<li> <label>아이디</label> </li>
+				<li> <label>비밀번호</label> </li>
+				<li> <label>사업자등록번호</label> </li>
+				<li> <label>브랜드명</label> </li>
+				<li> <label>대표명</label> </li>
+				<li> <label>웹사이트</label> </li>
+				<li> <label>전화번호</label> </li>
+				<li> <label>주소</label> </li>			
+			</ul>		
+			<form id='joinn' name='joinn'>
+				<ul id="joinInput">
+					<li>
+						<input type='text' id='vid' name='vid' value='test'>
+						<button type="button" class='joinboxbtn' onclick="idCheck()">ID 중복체크</button>				
+						<input type='hidden' id='idchecked' value='1'>
+					</li>
+					<li><input type='password' id='pwd' name='pwd' value='1234'></li>
+					<li><input type='text' id='com_number' name='com_number' value='2312132'></li>
+					<li><input type='text' id='brandname' name='brandname' value='MangWooMul'></li>
+					<li><input type='text' id='ceoname' name='ceoname' value='박지환'></li>
+					<li><input type='text' id='website' name='website' value='www.ddd.com'></li>
+					<li><input type='text' id='phone' name='phone' value='01042323296'></li>
+					<li>
+					<input type='text' id='address' name='address' value=''>
+					<button type="button" class='joinboxbtn' onclick="openaddressbox()">주소찾기</button>
+					</li>
+				</ul>		
+			</form>			
+				<button type='button' onclick='join();'>회원가입</button>				
+		</div>		
+		<div id="addbox" style="width:340px; position:absolute; top:470px; left:23px; border:10px double #3D1B14; border-radius:0.8em;">	
+			<div id="postcodify">
+				<label>우편번호 </label> <span><input type="text" name="" id="postcode" value=""></span><p>
+				<label>주 소 </label> <span><input type="text" name="" id="addressed" value=""></span><p>
+				<label>상세주소 </label> <span><input type="text" name="" id="details" value=""></span><p>
+				<button type='button' class='joinboxbtn' onclick='setAddress(),hidebox()'>주소저장</button>
+			</div>
+		</div>		
+	</div>
+</div>
+</body>
+</html>

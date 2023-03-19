@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>MARKET</title>
+</head>
+<style>
+
+
+@font-face {
+    font-family: 'YanoljaYacheR';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/YanoljaYacheR.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+.star {
+  position: relative;
+  font-size: 1em;
+  color: #ddd;
+}
+.star span {
+
+  position: absolute; 
+  left: 0;
+  color:gold;
+  overflow: hidden;
+  pointer-events: none;
+}
+#starscore{font-family: 'YanoljaYacheR'; font-size:25px;}
+
+.itemcomp{ margin:auto; }
+
+.itemcomp:hover {
+
+	box-shadow: 5px 10px 10px 10px #ddd;
+	font-weight: bold;
+	transition: box-shadow 0.5s linear;
+}
+
+</style>
+
+<body>
+
+<div th:include="@{/fragments/findnavi.html}"></div>
+<div th:include="@{/fragments/searchnavi.html}"></div>
+<div th:if="${end!=0}" style="margin:auto; width:1200px; height:100%; padding-top:100px; text-align:center;">
+<div style='display:flex;'>
+	<div class='itemcomp' th:each="items : ${list}" style="width:200px; height:300px; padding-top:20px; ">	
+	<a th:href="'/drinks/detail/'+${items.drink.itemcode}" style=' height:370px; width:220px;text-decoration: none; color:black; '>
+		<ul style='list-style:none; margin:auto; height:280px; width:150px;padding:0;'>
+			<div style='text-align:left;'>[[${items.drink.brandname}]]</div><p>
+			<div>  
+				<img style="width:150px; height:150px;" th:src="@{'/'+${items.drink.name}+'/'+${items.att.fname}}">
+				<div>
+					<li style='font-weight: bold;'>[[${items.drink.name}]]</li>
+					<li>[[${items.drink.alcohol}]]도</li>
+					<li>[[${items.drink.price}]]원</li>
+					<li><span th:if="${1<=items.drink.quantity} and ${items.drink.quantity<10}" th:text="'매진 임박 '+${items.drink.quantity}+'개 남음'" style='color:red'></span>
+						<span th:if="${items.drink.quantity==0}" th:text="'매진'" style='color:gray;'>					
+					</li>
+					
+					<li id='starscore'>						
+						<span class="star">★★★★★
+						<span th:style="'width:'+${(items.avg)*20}+'%;'">★★★★★</span>
+						</span>
+						<span th:text="'('+${items.cnt}+')'"></span>		
+					</li>
+				</div>
+			</div>
+		</ul>	
+	</a>
+	</div> 
+</div>
+<div th:if="${finditems==1}">
+	<span th:if="${end!=0}" style="font-size:32px; padding-left:20px;" th:each="page:${#numbers.sequence(1,end)}">
+		<a th:href="@{'/drinks/find'(keyword=${keyword},pg=${page})}">[[${page}]]</a>
+	</span>
+</div>
+<div th:if="${finditems==2}">
+	<span th:if="${end!=0}" style="font-size:32px; padding-left:20px;" th:each="page:${#numbers.sequence(1,end)}">
+		<a th:href="@{'/drinks/findAlcohol'(keyword1=${keyword1},keyword2=${keyword2},pg=${page})}">[[${page}]]</a>
+	</span>
+</div>
+
+</div>
+
+
+<div th:unless="${end!=0}" style="margin:auto; width:50%; height:100%; padding-top:100px; text-align:center;">
+ 찾으시는 제품이 없습니다. 다른 키워드로 검색해보세요.
+</div>
+</body>
+</html>

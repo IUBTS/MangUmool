@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.web.market.mapper.MarketMapper">
+
+	<select id='getMain'
+			parameterType='String'
+			resultType='map'>
+	
+		SELECT i.alcohol,i.type,i.itemcode,i.price,i.quantity,i.brandname,i.name,a.fname,a.ianum,ROUND(AVG(r.score),2) AS avg, COUNT(r.score) AS cnt
+        FROM TRADI_ITEMS i
+		LEFT OUTER JOIN TRADI_I_ATTACH a
+		ON i.itemcode=a.itemcode
+		LEFT OUTER JOIN TRADI_REVIEW r
+		ON i.itemcode=r.itemcode
+		WHERE POST = 1 
+		AND fname LIKE 'thumnail%'
+		AND ( i.name LIKE '%'||#{keyword}||'%'
+			  OR i.brandname LIKE '%'||#{keyword}||'%'
+		 	  OR i.type LIKE '%'||#{keyword}||'%'
+		 	  OR i.material LIKE '%'||#{keyword}||'%'
+		 	  OR i.producingarea LIKE '%'||#{keyword}||'%'
+		)
+        GROUP BY i.alcohol,i.type,i.itemcode,i.price,i.quantity,i.brandname,i.name,a.fname,a.ianum
+	
+	</select>
+	
+	<select id='getItemByAlcohol'
+			parameterType='map'
+			resultType='map'>
+	
+		SELECT i.alcohol,i.type,i.itemcode,i.price,i.quantity,i.brandname,i.name,a.fname,a.ianum,ROUND(AVG(r.score),2) AS avg, COUNT(r.score) AS cnt
+        FROM TRADI_ITEMS i
+		LEFT OUTER JOIN TRADI_I_ATTACH a
+		ON i.itemcode=a.itemcode
+		LEFT OUTER JOIN TRADI_REVIEW r
+		ON i.itemcode=r.itemcode
+		WHERE POST = 1 
+		AND fname LIKE 'thumnail%'
+		AND <![CDATA[ #{firstspot} <= i.alcohol ]]> 
+		AND <![CDATA[ i.alcohol <= #{secondspot}]]> 
+        GROUP BY i.alcohol,i.type,i.itemcode,i.price,i.quantity,i.brandname,i.name,a.fname,a.ianum
+	
+	</select>
+	
+
+	 <!--  아이템 상세정보 불러내기 -->
+	<select id="getDetail"
+			parameterType="Integer"
+			resultType='map'>
+			
+	 SELECT a.itemcode,a.name,a.type,a.price,a.brandname,a.producingarea,a.regdate,a.detailcontent,a.quantity,
+	 a.vnum,a.post,a.alcohol,a.material,a.vnum,b.ianum,b.fname,r.score,r.rnum,r.content,r.cnum,c.nickname,r.regdate reviewdate
+	 FROM TRADI_ITEMS a 
+	 LEFT OUTER JOIN TRADI_I_ATTACH b ON a.itemcode=b.itemcode
+	 LEFT OUTER JOIN TRADI_REVIEW r ON a.itemcode=r.itemcode	 
+	 LEFT OUTER JOIN TRADI_CUSTOMER c ON c.cnum=r.cnum
+	 WHERE a.itemcode=#{itemcode}		
+			
+	</select>
+	
+	<select id="getQAList"
+			parameterType="Integer"
+			resultType='map'>
+	
+	 SELECT q.qnum,q.content qcontent,q.cnum,q.regdate qregdate,an.regdate ansregdate,an.content anscontent,an.annum
+     FROM TRADI_ITEMS a 
+     INNER JOIN TRADI_QUESTION q ON a.itemcode=q.itemcode
+     LEFT OUTER JOIN TRADI_ANSWER an ON an.qnum=q.qnum
+	 WHERE a.itemcode=${itemcode}	
+	 ORDER BY q.regdate DESC
+	
+	</select>
+
+	<insert id="addQuestion"
+			parameterType="com.spring.web.market.vo.Question">
+			
+		INSERT INTO TRADI_QUESTION(QNUM,ITEMCODE,CNUM,CONTENT)
+		VALUES(TRADI_QUESTION_SEQ.NEXTVAL,#{itemcode},#{cnum},#{content})		
+			
+	</insert>
+
+
+	<update id='addCart'
+			parameterType='com.spring.web.market.vo.Cart'>
+		
+		 MERGE INTO TRADI_CART c
+		 USING DUAL 
+		 ON (c.ITEMCODE=#{itemcode} AND c.cnum=#{cnum})
+		 WHEN MATCHED THEN 	
+			 UPDATE SET c.AMOUNT=amount+#{amount}
+		 WHEN NOT MATCHED THEN 
+		     INSERT (c.ITEMCODE,c.CANUM,c.CNUM,c.AMOUNT) 
+			 VALUES(#{itemcode},TRADI_CART_SEQ.NEXTVAL,#{cnum},#{amount})
+				
+	</update>
+	
+	
+	<select id='getUserByCnum'
+			parameterType='integer'
+			resultType='com.spring.web.customer.vo.Customer'>
+			
+		SELECT * FROM TRADI_CUSTOMER WHERE cnum=#{cnum} 			
+			
+	</select> 
+	
+	<select id='getCart'
+			parameterType='integer'
+			resultType='map'>
+			
+		SELECT c.itemcode,c.canum,c.amount,i.name,fname,i.price
+		FROM TRADI_CART c 
+		LEFT OUTER JOIN TRADI_ITEMS i
+		ON c.itemcode = i.itemcode
+        LEFT OUTER JOIN TRADI_I_ATTACH a
+		ON c.itemcode = a.itemcode
+		WHERE cnum=#{cnum} 
+		AND fname LIKE 'thumnail%'			
+			
+	</select> 
+	
+	
+	<delete id="delCartItems"
+			parameterType="java.util.List">
+			
+		 DELETE FROM TRADI_CART
+	    <where>
+		    <foreach collection="list" item="item" separator="OR">
+		        (ITEMCODE = #{item.itemcode} AND CNUM = #{item.cnum})
+		    </foreach>
+	    </where>			
+	</delete>
+	
+	
+	<!-- 결제승인 후 주문정보 등록 -->
+	<insert id='addOrderList'
+			parameterType='com.spring.web.market.vo.Order'>
+			
+	INSERT INTO TRADI_ORDER
+	(ONUM,CNUM,TTLPRICE,TOADDRESS,TONAME,TOPHONE,FROMADDRESS,FROMNAME,FROMPHONE,REQUESTMEMO)
+	VALUES
+	(TRADI_ORDER_SEQ.NEXTVAL,#{cnum},#{ttlprice},#{toaddress},#{toname},#{tophone},
+	#{fromaddress},#{fromname},#{fromphone},#{requestmemo})			
+	</insert>	
+	
+	<!-- 주문정보에 있는 아이템목록 등록 -->
+	<update id="addOrderItem"
+			 parameterType="list">         
+       
+       INSERT INTO TRADI_ORDERITEM(OINUM,ONUM,CNUM,ITEMCODE,NAME,PRICE,AMOUNT)
+       SELECT TRADI_ORDERITEM_SEQ.NEXTVAL AS oinum, t.* FROM
+       (
+           <foreach collection="list" item="item" index="index" separator="union all">
+                SELECT (SELECT MAX(ONUM) FROM TRADI_ORDER) AS ONUM, #{item.cnum},#{item.itemcode},#{item.name},#{item.price},#{item.amount} FROM DUAL
+           </foreach>
+       )t       
+   </update>   		
+	
+
+</mapper>

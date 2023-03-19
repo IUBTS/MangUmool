@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>판매자 상세정보</title>
+<style>
+	#logoBox{ width:110px; margin:auto; margin-top:50px;}
+	#content{
+	    width:460px;
+	    height:580px; 
+	    margin: auto;
+	    border: 3px dotted slategrey ;
+	    border-radius: 0.8em;
+	    top:30px;
+	    position: relative;
+	    padding:30px;
+	}
+	#emptyContent{
+	 	width:460px;
+	    height:220px; 
+	    margin: auto;
+	    border: 3px dotted slategrey ;
+	    border-radius: 0.8em;
+	    top:30px;
+	    position: relative;
+	    padding:30px;	
+	}
+	ul{padding-left: 40px; list-style: none; float:left; position: relative;}
+	ul>li{border-bottom:1px solid; line-height: 50px;}
+	h1{text-align:center; font-size:28px; font-weight: bold;}
+	#title>li{ width: 80px; }
+	#info>li{ width: 260px; }
+</style>
+</head>
+<body>
+<div id="logoBox">
+	<a href='/admin/main'><img style="width:110px;height:110px" src="/mangwoomul.png"></a>
+</div>
+<div th:if="${ven!=null}">
+	<div id="content">
+	    <h1>판매자 상세정보</h1>
+	    <ul id="title">
+	        <li><label>판매자번호</label></li>
+	        <li><label>아이디</label></li>
+	        <li><label>회사명</label></li>
+	        <li><label>사업자등록번호</label></li>
+	        <li><label>대표명</label></li>
+	        <li><label>전화번호</label></li>
+	        <li><label>주소</label></li>
+	        <li><label>웹사이트</label></li>
+	        <li><label>회원가입상태</label></li>	        
+	    </ul>
+	    <ul id="info">
+	        <li><span th:text="${ven.vnum}"></span></li>
+	        <li><span th:text="${ven.vid}"></span></li>
+	        <li><span th:text="${ven.brandname}"></span></li>
+	        <li><span th:text="${ven.com_number}"></span></li>
+	        <li><span th:text="${ven.ceoname}"></span></li>
+	        <li><span th:text="${ven.phone}"></span></li>
+	        <li><span th:text="${ven.address}"></span></li>
+	        <li><span th:text="${ven.website}"></span></li>	     
+	        <li>
+				<span th:if="${ven.permit==1}" th:text="'회원가입 대기'"></span>
+				<span th:if="${ven.permit==2}" th:text="'회원'"></span>
+	        </li>        
+	    </ul>
+	</div>
+</div>
+<div th:unless="${ven!=null}">
+	<div id="emptyContent">
+		<h1>
+			찾으시는 판매자가 없습니다.<br>
+			다시 검색해 주시기 바랍니다.<p>
+		</h1>
+		<div style="width:300px; margin:auto; margin-top:50px;">
+		<h3>판매자 아이디 검색하기</h3>
+		<form action="/admin/findVendor" method="post">	
+		 주문번호 : <input type="text" name="vid" value="super">	
+			<button type="submit">검색</button>
+		</form>
+		</div>
+	</div>	
+</div>
+<div style="text-align:center; margin-top:50px;">
+	<input type="button" value="BACK" onClick="history.go(-1)"> 
+</div>
+</body>
+</html>

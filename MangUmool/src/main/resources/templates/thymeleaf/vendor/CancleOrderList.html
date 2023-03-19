@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>OrderCancle</title>
+</head>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+
+function approveCancle(cannum)
+{
+	var oinum = $('#oinum'+cannum).val();
+	
+	alert('oinum: ' + oinum);
+	$.ajax({
+		url : '/vendor/appCancle',	
+		method : 'post',
+		data : {"oinum":oinum},  											
+		cache : false,		
+		dataType:'json',   
+		success : function(res)                
+		{		
+			if(res.suc)
+			{
+				alert(res.msg);
+				location.reload();
+			}
+							
+		},
+		error : function(xhr,status,err)
+		{
+			alert(err);	
+		}
+		});			
+	
+}
+
+
+</script>
+<style>
+
+#clist{width:640px; margin:auto; margin-bottom:20px; border:0.5px solid gray; border-radius:0.3em; padding:10px; padding-left:50px;}
+
+#clist2{margin-bottom:20px; font-size:23px; margin:auto; padding-top:50px;}
+
+h1{
+	 color:#465578;
+		margin:0;
+}
+</style>
+<body>
+
+<div style="position:absolute" th:include="@{/fragments/vendorNavi.html}"></div>
+<div style="position:absolute; left:400px;">
+	<div style="padding-top:50px; margin-bottom:50px;">
+		<h1 style="text-align:center;">취소요청리스트</h1>
+	</div>
+	
+	<div id="clist" th:each="l : ${list}">
+	
+		<details>
+			<summary >
+		
+				취소요청 <span th:if="${l.orderItem.confirm==4}" th:text="'승인완료'" style="color: red; float:right ; padding-right:100px;"></span> <br> 
+				<div style="border-top:5px double gray; width:600px;">
+				취소주문 ITEMCODE : <span th:text="${l.cancle.itemcode}"></span>
+				결제주문번호 : <span th:text="${l.cancle.onum}"></span><br>
+				상품주문번호 :  <span th:text="${l.cancle.oinum}"></span><br>
+				취소요청날짜 :  <span th:text="${l.cancle.regDate}"></span><br>
+				<h4>취소 사유</h4>
+				<span th:text="${l.cancle.reason}"></span>	
+				</div>
+			</summary>
+			
+			<div style="margin-top:20px; ">주문 정보</div>
+			<div style="border-top:5px double gray;  width:600px;">
+			제품명 <span th:text="${l.orderItem.name}"></span><br>
+			주문수량 <span th:text="${l.orderItem.amount}"></span><br>
+					
+			주문자 NICKNAME <span th:text="${l.customer.nickname}"></span><br>
+			주문자 연락처 <span th:text="${l.customer.phone}"></span><br>
+			주문자 이메일 <span th:text="${l.customer.email}"></span><br>
+			주문 날짜	<span th:text="${l.orderdate}"></span><br>
+			</div>
+			<div th:if="${l.orderItem.confirm==3}">
+				<form>
+					<input type="hidden" th:id="oinum+${l.cancle.cannum}" name="oinum" th:value="${l.cancle.oinum}">
+				</form>
+				<button type="button" th:onclick="approveCancle([[${l.cancle.cannum}]])"> 취소승인 </button>
+			</div>
+			<div th:if="${l.orderItem.confirm==4}"><span>취소완료</span></div>
+		</details>	
+	</div>
+	<div style="text-align:center; margin:auto; width:400px; margin-left:150px;">		
+		<span th:if="${end!=0}" style="font-size:32px; padding-left:20px;" th:each="page:${#numbers.sequence(1,end)}">
+			<a style="text-decoration: none; color: gray;" th:href="@{'/vendor/showCancleList'(pg=${page})}">
+				<span th:if="${page}==${pg}" style="color:red;" th:text="${page}"></span>
+				<span th:unless="${page}==${pg}" style="color:gray;" th:text="${page}"></span>				
+			</a>				
+		</span>
+	</div>
+	
+	<div id="clist2" th:if="${#lists.isEmpty(list)}">
+		<h1 style="text-align:center;">문의사항이 아직 없습니다.</h1> 
+	</div>
+
+</div>
+</body>
+</html>

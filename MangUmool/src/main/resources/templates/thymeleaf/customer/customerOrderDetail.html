@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>OrderDetail</title>
+</head>
+<body>
+<div th:include="@{/fragments/findnavi.html}"></div>
+<div th:include="@{/fragments/searchnavi.html}"></div>
+<div style='width:1200px; margin: auto;'>
+	<div th:each="orderinfo:${list}" style='width:800px; padding-top:30px; padding-bottom:20px; padding-left:50px; padding-right:50px; margin: auto;'>
+		<div style="margin-bottom:20px; padding-bottom:20px; font-size:23px; border-bottom:5px double gray;">주문내역</div>	
+		<div style="margin-top:50px; margin-bottom:80px;">
+			<img style="width:150px; height:150px; float:left; margin-right:50px;  margin-right:50px;" th:src="@{'/'+${orderinfo.orderitem.name}+'/'+${orderinfo.fname}}">	
+			<div style="display:inline; width:250px;font-size:19px;">		
+				주문번호 : <span th:text="${orderinfo.order.onum}"></span><br>			
+				주문날짜 : <span th:text="${orderinfo.order.orderdate}"></span><br> 			
+						
+				<div th:each="i : ${orderinfo.orderitem}">
+					상품번호 : <span th:text="${i.itemcode}"></span>	<br> 	
+					상품명 : <span th:text="${i.name}"></span> <br> 	
+				  개당가격 : <span th:text="${i.price/i.amount}"></span> 원	<br> 	
+				  주문수량 : <span th:text="${i.amount}"></span> 개<br> 	
+				     총가격 : <span th:text="${i.price}"></span> 원		   
+				</div>
+			</div>	
+		</div>
+		<div style="margin-top:60px;">
+		<div style="margin-bottom:20px; font-size:23px;">배송정보</div>	
+			<div th:each="o : ${orderinfo.order}" style="border-top:5px double gray; line-height:30px; padding-top:20px; font-size:19px;">
+				받는 분 : <span th:text="${o.toname}"></span><br>
+				배송주소 : <span th:text="${o.toaddress}"></span><br>				
+				받는 분 전화번호 : <span th:text="${o.tophone}"></span><br>
+				배송시 요청사항 :<span th:text="${o.requestmemo}"></span>
+			</div>
+		</div>		
+		<div th:if="${orderinfo.orderitem.delicomp!=null}" style="padding-top:50px; margin-left:50px;">
+			<iframe th:src="@{'https://tracker.delivery/#/'+${orderinfo.orderitem.delicomp}+'/'+${orderinfo.orderitem.deliverycode}}" target="_blank" style="width:700px;height:400px;">이 브라우저는 해당 내용을 지원하지 않습니다.</iframe>
+		</div>
+		<div th:unless="${orderinfo.orderitem.delicomp!=null}">
+			상품 배송 준비중입니다.		
+		</div>
+
+	</div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Cancle</title>
+</head>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+$(function(){
+
+	$("#selboxDirect").hide();
+	$("#sel").hide();
+	$('#selbtn').hide();
+	
+	$("#reason").change(function() {		
+	
+		if($("#reason").val() == "direct") 
+		{
+			$("#selboxDirect").show();
+			$("#sel").show();
+			$('#selbtn').show();
+			$('#regBtn').hide();
+		}  
+		else 
+		{
+			$("#selboxDirect").hide();
+			$("#sel").hide();
+			$('#selbtn').hide();
+		}
+	}) 	
+
+});
+
+function directInput()
+{
+	var directReason=$("#selboxDirect").val();	
+	$('#direct').val(directReason);
+	$('#regBtn').show();
+}
+
+function regCancle()
+{			
+	var serData = $('#cancleForm').serialize();       
+	$.ajax({
+			url : '/customer/regCancle',	
+			method : 'post',
+			data : serData,  											
+			cache : false,       	
+			dataType:'json',                      
+			success : function(res)                
+			{			
+				alert(res.msg);
+				if(res.reg)
+				{					
+					location.href="/customer/myorder";
+				}
+				
+			},
+			error : function(xhr,status,err)
+			{
+				alert(err);	
+			}
+			});		
+	}
+
+
+
+
+</script>
+<body>
+<div style="padding-top:100px; margin:auto; width:200px;">
+	<h1>취소/환불신청</h1>
+</div>
+<div th:each="orderinfo:${list}" style='width:800px; padding-top:50px; padding-bottom:100px; padding-left:50px; padding-right:50px; margin: auto;'>
+		<div style="margin-bottom:20px; padding-bottom:20px; font-size:18px; border-bottom:5px double gray;">주문내역</div>	
+		<div style="margin-top:50px; margin-bottom:80px;">
+			<img style="width:130px; height:130px; float:left; margin-right:50px;  margin-right:50px;" th:src="@{'/'+${orderinfo.orderitem.name}+'/'+${orderinfo.fname}}">	
+			<div style="display:inline; width:250px;font-size:15px;">		
+				주문번호 : <span th:text="${orderinfo.order.onum}"></span><br>			
+				주문날짜 : <span th:text="${orderinfo.order.orderdate}"></span><br> 								
+				<div th:each="i : ${orderinfo.orderitem}">
+					상품번호 : <span th:text="${i.itemcode}"></span>	<br> 	
+					상품명 : <span th:text="${i.name}"></span> <br> 		
+				  주문수량 : <span th:text="${i.amount}"></span> 개<br> 	
+				     총가격 : <span th:text="${i.price}"></span> 원		   
+				</div>
+			</div>	
+		</div>
+		<div style="margin-top:60px;">
+			<div style="margin-bottom:40px; padding-bottom:20px; font-size:18px; border-bottom:5px double gray; ">
+				반품사유를 입력해주세요.
+			</div>		
+			<form id='cancleForm'>	
+				<div>
+					<input type='hidden' id='oinum' name='oinum' th:value='${orderinfo.orderitem.oinum}'>
+					<input type='hidden' id='onum' name='onum' th:value='${orderinfo.order.onum}'>
+					<input type='hidden' id='itemcode' name='itemcode' th:value='${orderinfo.orderitem.itemcode}'>
+					[[${orderinfo.order.onum}]]			
+					<select id="reason" name="reason" style="width:500px; height:30px; font-size:18px;">
+						<option value="단순변심">단순변심</option>
+						<option value="배송정보를 잘 못 입력하였습니다.">배송정보를 틀리게 입력하였습니다.</option>
+						<option value="배송이 늦습니다.">배송이 늦습니다.</option>
+						<option value="다른 곳이 더 저렴합니다.">다른 곳이 더 저렴합니다.</option>
+						<option id="direct" value="direct">직접입력</option>
+					</select>
+				</div>
+			</form>
+			
+			<p>
+				<div>
+					<input type="text" id="selboxDirect" name="selboxDirect" style="width:490px; height:24px; font-size:18px;"/><p>
+					<button type="button" id="selbtn" onclick="directInput()">입 력</button>
+				</div>
+			<button id='regBtn' type="button" onclick="regCancle()">반품사유 제출</button>	
+			<input type="button" value="뒤로가기" onClick="history.go(-1)"> 
+		</div>	
+</div>
+
+
+
+</body>
+</html>

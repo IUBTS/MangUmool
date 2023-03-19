@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Q&A</title>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+$(function(){
+	var dialogs = document.querySelectorAll(".dialogs");
+	dialogs.forEach(function(dialog) {
+	  dialog.addEventListener("click", function(event) {
+	    if (event.target === dialog) {
+	      dialog.close();
+	    }
+	  });
+	});
+});
+
+
+function addAnswer(qnum)
+{
+	var itemcode = $('#itemcode'+qnum).val();
+	var content = $('#content'+qnum).val();
+	var qnum = $('#qnum'+qnum).val();
+	
+	alert('itemcode: ' + itemcode);
+	$.ajax({
+		url : '/vendor/regAnswer',	
+		method : 'post',
+		data : {"itemcode":itemcode,"qnum":qnum,"content":content},  											
+		cache : false,		
+		dataType:'json',   
+		success : function(res)                
+		{		
+			closemodal(qnum);
+			if(res.reg)
+			{
+				alert(res.msg);
+				location.reload();
+			}
+							
+		},
+		error : function(xhr,status,err)
+		{
+			alert(err);	
+		}
+		});		
+}
+function modal(qnum)
+{
+	const dialog = document.getElementById("dialog"+qnum);
+	dialog.showModal();
+}
+
+function closemodal(qnum)
+{
+	const dialog = document.getElementById("dialog"+qnum);
+	dialog.close();
+}
+</script>
+<style>
+h1{
+	color:#465578;
+	margin:0;
+	padding-bottom:50px;
+	text-align:center;
+	padding-top:50px;
+}
+
+</style>
+</head>
+<body>
+<div th:include="@{/fragments/vendorNavi.html}"></div>
+
+
+<div id="content">
+	<h1 >문의요청</h1>	
+	<div style="margin:auto; width:700px;">	
+		<div th:if="${#lists.isEmpty(list)}">
+			문의사항이 아직 없습니다.
+		</div>	
+		 <div th:each="q:${list}" style="border:5px double gray; margin-top:20px;">
+			<details>	
+			<summary th:unless="${q[0].answer}" th:text="${q[0].name}+'　'+'미답변 질문이 있습니다. CLICK !'"></summary>
+			<summary th:if="${q[0].answer}" th:text="${q[0].name}"></summary>
+				<div th:each="l:${q}">
+					<div>
+						<div>
+							질문일자 : <span th:text="${l.question.regDate}"></span><br>
+							질문내용 : <span th:text="${l.question.content}"></span>					
+						</div>
+						<div th:unless="${l.answer}"> 			
+							<button type="button" th:onclick="modal([[${l.question.qnum}]])">답변등록</button>					
+							<dialog class='dialogs' th:id="dialog+${l.question.qnum}" >
+								<form>
+									<input type="hidden" th:id="itemcode+${l.question.qnum}" name="itemcode" th:value="${l.question.itemcode}">
+									<input type="hidden" th:id="qnum+${l.question.qnum}" name="qnum" th:value="${l.question.qnum}">
+									<textarea th:id="content+${l.question.qnum}" name="content" placeholder="답변내용을 입력하세요" style="width:300px; height:180px;"></textarea>					
+								</form>	
+								<button class="close" th:id="close+${l.question.qnum}" th:onclick="closemodal([[${l.question.qnum}]])">
+							      닫기
+							    </button>			
+								<button type="button" th:onclick="addAnswer([[${l.question.qnum}]])">답변등록하기</button>					
+							</dialog>
+						</div>
+						<div th:if="${l.answer}"> 								
+							답변일자 : <span th:text="${l.answer.regDate}"></span><br>
+							답변내용 : <span th:text="${l.answer.content}"></span>				
+						</div>
+						<p>
+					</div>
+				</div>
+			</details>			
+		</div>
+		<div style="text-align:center; margin:auto; width:400px; margin-left:200px;">		
+			<span th:if="${end!=0}" style="font-size:32px; padding-left:20px;" th:each="page:${#numbers.sequence(1,end)}">
+				<a style="text-decoration: none; color: gray;" th:href="@{'/vendor/getQA'(pg=${page})}">
+					<span th:if="${page}==${pg}" style="color:red;" th:text="${page}"></span>
+					<span th:unless="${page}==${pg}" style="color:gray;" th:text="${page}"></span>				
+				</a>				
+			</span>
+		</div>
+		
+	</div>
+</div>
+</body>
+</html>

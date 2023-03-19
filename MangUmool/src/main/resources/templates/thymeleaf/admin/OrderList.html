@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>상품 주문 목록</title>
+</head>
+<style>
+#logoBox{ width:110px; margin:auto; margin-top:50px;}
+#content{width:700px; margin:auto;position:relative;top:30px; border:5px double gray; }
+#OrderList{ padding-left: 30px; margin-bottom: 20px; padding-top:20px; border-top:5px double gray; }
+h3{ text-align:center; font-size: 23px;}
+
+#orderByOinum1{ margin-bottom: 50px;}
+#orderByOinum2{  margin-bottom: 20px;}
+#OrderSummary {margin-bottom:10px;}
+#oneOrder{padding-left: 150px; font-size:21px;}
+#emptyOrder{font-size:19px; color:red;}
+</style>
+<body>
+<div id="logoBox">
+	<a href='/admin/main'><img style="width:110px;height:110px" src="/mangwoomul.png"></a>
+</div>
+<div id="content">
+	<div>
+	<h3>주문목록</h3>
+		<div id="OrderList" th:unless="${#lists.isEmpty(list)}" th:each="o : ${list}">
+			<details>
+				<summary id="OrderSummary">
+					<span>종합주문번호 : </span><span th:text="${o.order.onum}"></span>　
+					<span>품목주문번호 : </span><span th:text="${o.oitem.oinum}"></span>　
+					<span>상품코드 : </span><span th:text="${o.oitem.itemcode}"></span>　
+					<span>상품명 : </span><span th:text="${o.oitem.name}"></span>　
+					<span>주문 날짜 : </span><span th:text="${o.order.orderdate}"></span><br>
+				</summary>		
+				<span>주문하신 분 : </span><span th:text="${o.order.fromname}"></span>　
+				<span>주문하신 분 연락처 : </span><span th:text="${o.order.fromphone}"></span>　
+				<span>수량 : </span><span th:text="${o.oitem.amount}+'개'"></span>　
+				<span>상품 결제 가격 : </span><span th:text="${o.oitem.price}+'원'"></span>　
+				<span>배송상태 : </span><span th:if="${o.oitem.confirm==0}" th:text="'배송준비중'"></span>
+				<div style="display:inline;" th:if="${o.oitem.confirm==1}"> 
+					배송출발
+				</div>
+				<div style="display:inline; color:blue;" th:if="${o.oitem.confirm==2}"> 
+					배송완료
+				</div>
+				<div style="display:inline; color:gold;" th:if="${o.oitem.confirm==3}"> 
+					취소신청중
+				</div>
+				<div style="display:inline; color:red;" th:if="${o.oitem.confirm==4}"> 
+					취소완료
+				</div>
+				<p>
+			</details>	
+		</div>
+	</div>
+	
+	
+	
+	<div id="oneOrder" th:if="${#lists.isEmpty(list) && map!=null}" >
+		<div id="orderByOinum2" th:each="o :${map.oitem}">	
+			<span>품목주문번호 : </span><span th:text="${o.oinum}"></span><br>　
+			<span>상품코드 : </span><span th:text="${o.itemcode}"></span><br>　
+			<span>상품명 : </span><span th:text="${o.name}"></span><br>　
+			<span>주문 수량 : </span><span th:text="${o.amount}+'개'"></span><br>　
+			<span>상품 결제 가격 : </span><span th:text="${o.price}+'원'"></span><br>　
+			<span>배송상태 : </span><span th:if="${o.confirm==0}" th:text="'배송준비중'"></span>
+			<div style="display:inline;" th:if="${o.confirm==1}"> 
+				배송출발
+			</div>
+			<div style="display:inline; color:blue;" th:if="${o.confirm==2}"> 
+				배송완료
+			</div>
+			<div style="display:inline; color:gold;" th:if="${o.confirm==3}"> 
+				취소신청중
+			</div>
+			<div style="display:inline; color:red;" th:if="${o.confirm==4}"> 
+				취소완료
+			</div>
+		</div>	
+		<div id="orderByOinum1" th:each="o :${map.order}">
+			<span>종합주문번호 : </span><span th:text="${o.onum}"></span><br>　
+			<span>주문하신 분 : </span>	<span th:text="${o.fromname}"></span><br>　
+			<span>주문하신 연락처 : </span><span th:text="${o.fromphone}"></span><br>　
+			<span>주문 날짜 : </span>	<span th:text="${o.orderdate}"></span><p>
+		</div>			
+	</div>
+	
+	<div id="emptyOrder" th:if="${#lists.isEmpty(list) && map==null}">
+		  <h3>찾으시는 주문정보가 없습니다.</h3>
+	</div>	
+</div>
+
+<div style="text-align:center; margin-top:60px;">
+	<input type="button" value="BACK" onClick="history.go(-1)"> 
+</div>
+</body>
+</html>

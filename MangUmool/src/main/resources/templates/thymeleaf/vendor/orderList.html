@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>배송요청 목록</title>
+</head>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+
+	function goDelivery(index)
+	{
+		var deliverycode = $('#deliverycode'+index).val();
+		var oinum = $('#oinum'+index).val();
+		var amount = $('#amount'+index).val();
+		var itemcode = $('#itemcode'+index).val();
+		var delicomp = $('#delicomp'+index).val();
+		
+		alert('송번'+deliverycode+'주문넘'+oinum+'수량'+amount+'템코드'+itemcode+'택배사'+delicomp);
+		
+		if(deliverycode==""||deliverycode==null)
+		{
+			alert('송장번호를 입력하셔야 주문확인이 완료됩니다.');
+			return;
+		}	
+	  	  $.ajax({
+				url:'/vendor/godelivery',
+				type:'POST',
+				data:{"deliverycode":deliverycode,"oinum":oinum,"amount":amount,"itemcode":itemcode,"delicomp":delicomp},
+				dataType:'json',
+				success: function(res){
+					if(res.updated)
+					{
+						alert(res.msg);
+						location.reload();
+					}
+					else alert(res.msg);
+						
+				}, error: function(xhr,status,err){
+					alert('에러: '+err);
+				}				
+	  	  });	
+	}
+	
+	function delicomplete(index)
+	{
+		var oinum = $('#oinum'+index).val();
+
+		 $.ajax({
+				url:'/vendor/completed',
+				type:'POST',
+				data:{"oinum":oinum},
+				dataType:'json',
+				success: function(res){
+					if(res.updated)
+					{
+						alert(res.msg);
+						location.reload();
+					}
+					else alert(res.msg);
+						
+				}, error: function(xhr,status,err){
+					alert('에러: '+err);
+				}				
+	  	  });		
+	}
+	
+</script>
+<style>
+
+
+
+h1{
+	color:#465578;
+	margin:0;
+	margin-left:40px;
+	padding-bottom:50px;
+	text-align:center;
+	padding-top:50px;
+}
+
+.orderList{width:800px; margin-left:200px;
+	border-left:1px solid gray;
+	border-bottom:1px solid gray;
+	border-radius:0.3em; margin-bottom:32px; padding:5px;}
+	
+#content{width:1000px; text-align:left;}
+
+.orderList:hover{
+	box-shadow: 2px 7px 7px 7px #ddd;
+	font-weight: bold;
+	transition: box-shadow 0.5s linear;
+	border-left:1px solid gray;
+	border-bottom:1px solid gray;
+	border-radius:0.3em;
+}
+</style>
+
+<body>
+<div style="position:absolute;" th:include="@{/fragments/vendorNavi.html}"></div>
+
+
+<div id="content" style="position:absolute; left:200px;">
+<div style="margin-bottom: 20px; margin-left:200px;">
+	<h1>주문 요청 목록</h1>
+	<a href='/vendor/exceldown'><button>Excel다운로드</button></a>
+</div>
+
+<div class="orderList" th:each="info,infoStat:${list}">
+<ul style="line-height:15px;list-style: none;padding-left:10px; margin-top:0;">
+	<li style="margin-top:10px;"> 
+		주문날짜:　<span th:text="${info.order.orderdate}"></span>
+		총주문번호:　<span th:text="${info.order.onum}"></span>
+		상품주문번호:　<span th:text="${info.oitem.oinum}"></span>		
+		상품코드번호:　<span th:text="${info.oitem.itemcode}"></span>
+		품목:　<span th:text="${info.oitem.name}"></span>
+		수량:　<span th:text="${info.oitem.amount}"></span><br>
+	</li>
+	<li>	
+		발송인:　<span th:text="${info.order.fromname}"></span>
+		발송인 전화번호:　<span th:text="${info.order.fromphone}"></span>
+		발송인 주소:　<span th:text="${info.order.fromaddress}"></span><br>
+		수령인:　<span th:text="${info.order.toname}"></span>
+		수령인 전화번호:　<span th:text="${info.order.tophone}"></span>
+		수령인 주소:　<span th:text="${info.order.toaddress}"></span><br>
+	</li>
+	<li>	
+		주문상태:　<span th:switch="${info.oitem.confirm}">
+					<span th:case="0">배송 상태 입력 대기중</span>
+					<span th:case="1">출고</span>
+					<span th:case="2">배송 완료</span>
+				</span><br>
+		<span th:if="${info.oitem.deliverycode!=0}">
+			택배사:　	<span th:switch="${info.oitem.delicomp}">					
+						<span th:case="'kr.epost'">우체국택배</span>
+						<span th:case="'kr.cjlogistics'">CJ대한통운</span>
+						<span th:case="'kr.hanjin'">한진택배</span>
+						<span th:case="'kr.logen'">로젠택배</span>					
+					</span>			
+			등록된 송장번호:　<span th:text="${info.oitem.deliverycode}"></span>
+			<a th:href="@{'https://tracker.delivery/#/'+${info.oitem.delicomp}+'/'+${info.oitem.deliverycode}}" target="_blank"><button>배송조회</button></a>	
+			<div th:if="${info.oitem.confirm==1}">
+				  <form>
+					<input type="hidden" th:id="'oinum'+${infoStat.index}" name="oinum" th:value="${info.oitem.oinum}">
+					<button type="button" th:onclick="delicomplete([[${infoStat.index}]])">배송완료</button>
+				  </form>
+			</div>
+		</span>
+		<span th:unless="${info.oitem.deliverycode!=0}">
+			<form th:id="${'delicode'+infoStat.index}">
+				<input type='hidden' th:id="'oinum'+${infoStat.index}" name='oinum' th:value='${info.oitem.oinum}'>
+				<input type='hidden' th:id="'itemcode'+${infoStat.index}" name='itemcode' th:value='${info.oitem.itemcode}'>
+				<input type='hidden' th:id="'amount'+${infoStat.index}" name='amount' th:value='${info.oitem.amount}'>
+				송장번호:　<input type='number' th:id="'deliverycode'+${infoStat.index}" name='deliverycode' value="6865275296876">
+				택배사 : <select th:id="'delicomp'+${infoStat.index}" name="delicomp">
+						    <option value="kr.epost">우체국택배</option>
+						    <option value="kr.cjlogistics">CJ대한통운</option>
+						    <option value="kr.hanjin">한진택배</option>
+						    <option value="kr.logen">로젠택배</option>
+						  </select>			
+			</form>
+			<button type='button' th:onclick="goDelivery([[${infoStat.index}]]);">입력</button>
+		</span>		
+	</li>
+</ul>
+</div>
+<div style="text-align:center; margin:auto; width:400px; margin-left:400px;">
+	<span th:if="${end!=0}" style="font-size:32px; padding-left:20px;" th:each="page:${#numbers.sequence(1,end)}">
+		<a style="text-decoration: none;" th:href="@{'/vendor/orderlist'(pg=${page})}">
+			<span th:if="${page}==${pg}" style="color:red;" th:text="${page}"></span>
+			<span th:unless="${page}==${pg}" style="color:gray;" th:text="${page}"></span>
+		</a>
+	</span>
+</div>
+</div>
+</body>
+</html>

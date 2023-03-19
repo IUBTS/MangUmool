@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>JOINFORM</title>
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.8.js"></script>
+<script src="//d1p7wdleee1q2z.cloudfront.net/post/search.min.js"></script>
+<script type="text/javascript">
+
+	function getAdultPass()
+	{
+		var userCode="imp84767267";
+		IMP.init(userCode);
+		IMP.certification({ 
+			pg: "html5_inicis.MIIiasTest",
+			    merchant_uid: "merchant_"+ new Date().getTime(),
+			    popup : true
+			  }, 
+		function (rsp){ 
+			 if (rsp.success){				 
+				 
+				 var phone = $('#phone').val();
+				 alert(phone);
+				 $("#phone").attr("readonly",true); 
+				 $("#birth").attr("readonly",true); 
+				 
+				/*  --------------문자인증시 가능( 지금은 테스트용 간편인증밖에 안되서 인증정보가 넘어오지 않는상태.)
+				 jQuery.ajax({
+			        url: "/customer/certification", // 서비스 웹서버
+			        method: "POST",
+			        headers: { "Content-Type": "application/json" },
+			        data: { imp_uid: rsp.imp_uid }
+	                }).done(function(res) {
+	
+	              		alert(res.birth);
+	              		alert(res.phone);
+	                });
+				 */		
+			  } 
+			 else{
+			   		alert('인증에 실패했습니다.');
+			 }
+		});
+	}
+
+	function join()
+	{	
+		var idcheck = $('#idchecked').val();
+		if(idcheck==1)
+		{
+			alert('ID 중복검사를 하셔야 합니다.');	
+			return false;
+		}	
+		var serData = $('#joinn').serialize();      	
+		$.ajax({
+				url : '/user/customer/join',	
+				method : 'post',
+				data : serData,  											
+				cache : false,       
+		
+				dataType:'json',                      
+				success : function(res)                
+				{					
+					alert(res.joined? '회원가입 성공' : '회원가입이 정상적으로 이루어지지 않았습니다.');   
+					if(res.joined)
+					{
+						location.href='/drinks/';
+					}
+					else
+					{
+						alert(res.msg);
+					}
+				},
+				error : function(xhr,status,err)
+				{
+					alert(err);	
+				}
+				});		
+		}
+
+    $(function() { 
+    	$("#postcodify").postcodify({
+        insertPostcode5 : "#postcode",
+        insertAddress : "#addressed",
+        insertDetails : "#details",
+        hideOldAddresses : false        
+    });     	
+    	hidebox();
+    });    
+    
+    function setAddress()
+    {
+    	var postcode = $('#postcode').val();
+    	var addressed = $('#addressed').val();
+    	var details = $('#details').val();
+    	$('#address').val(postcode+' '+addressed+' '+details);
+    }
+
+    function openaddressbox()
+    {
+    	$('#addbox').css('display','');
+    }    
+    
+    function hidebox()
+    {
+    	$('#addbox').css('display','none');
+    }
+    
+    function pwdCheck()
+    {
+       var pw = $('#pwd').val();
+       var pwCheck = $('#pwCheck').val();
+       
+        if(pw != pwCheck)
+        {
+           $('#check').html("비밀번호를 다시 확인해주세요.");
+           $('#check').css("color","red");
+        }
+         else 
+         {
+           $('#check').html("비밀번호가 일치합니다.");
+           $('#check').css("color","blue");
+         }	  
+    }
+    
+    function idCheck()
+    {
+    	var cid = $('#cid').val();
+
+    	$.ajax({
+			url : '/user/customer/idDupliCheck',	
+			method : 'post',
+			data : {"cid":cid},  											
+			cache : false,       	
+			dataType:'json',                      
+			success : function(res)                
+			{					
+				if(res.checked)
+				{
+					$('#idchecked').val('2');
+					alert(res.msg);
+					 $("#cid").attr("readonly",true); 
+				}
+				else
+				{
+					alert(res.msg);
+				}
+			},
+			error : function(xhr,status,err)
+			{
+				alert(err);	
+			}
+			});		    	
+    }    
+</script>
+<style>
+
+body{width:100%; height:100%; margin:0;background-color:#F8ECDB;}
+.joinbox{margin-left:85px; position:relative;}
+#joincontent{ width:350px;height:550px; top:66px; left:20px; text-align:left;}
+#logo{top:30px;}
+#joinbtn{float:right; width:100px; height:30px; margin-right:140px; margin-top:30px}
+#addbox{ margin:auto; position:relative; width: 400px;}
+</style>
+</head>
+<body>
+
+<div style="width:800px; margin:auto; position:relative; top:100px;">
+	<div style="width: 600px; margin:0 auto;">
+		<img style="width:560px;height:750px" src="/joinframe.png">
+	</div>
+	<div style="position:absolute; transform:translate(27%,-105%); text-align:center;" >
+		<div id="logo" class='joinbox'>
+			<a href="/drinks/"><img style="width:130px;height:130px;"  src="/mangwoomul.png"></a>		
+		</div>
+		<div id="joincontent" class='joinbox'>
+		<form id='joinn' name='joinn'>
+	
+			<label>아이디</label>　<input type='text' id='cid' name='cid' value=''> <button type="button" class='joinboxbtn' onclick="idCheck()">ID 중복체크</button><p>
+			<input type='hidden' id='idchecked' value='1'>
+			<label>비밀번호</label>　<input type='password' id='pwd' name='pwd' value=''> <p>
+			<label>비밀번호 확인</label>　<input id='pwCheck' name='pwCheck' type="password" onkeyup="pwdCheck();"><br>
+			<span id="check"></span><p>
+			<label>이름</label>　<input type='text' id='cname' name='cname' value=''><p>
+			<label>NICKNAME</label>　<input type='text' id='nickname' name='nickname' value=''><p>
+			<label>전화번호</label>　<input type='text' id='phone' name='phone' value=''><p>
+			<label>생년월일</label>　<input type='date' id='birth' name='birth'><p>
+			<button type='button' class='joinboxbtn' onclick="getAdultPass();">간편 성인인증</button><p>
+			<label>E-mail</label>　<input type='text' id='email' name='email' value=''><p>
+			<label>주소</label>　<input type='text' id='address' name='address' value=''>
+			<button type="button" class='joinboxbtn' onclick="openaddressbox()">주소찾기</button>			
+			<p>			
+			<button id='joinbtn' class='joinboxbtn' type='button' onclick='join();'>회원가입</button>	
+		</form>
+		</div>
+	</div>
+	
+	<div id="addbox">
+	
+		<div id="postcodify" style="width:300px; text-align:left;">
+		
+		<label>우편번호 </label> <span><input type="text" name="" id="postcode" value=""></span><p>
+		<label>주 소 </label> <span><input type="text" name="" id="addressed" value=""></span><p>
+		<label>상세주소 </label> <span><input type="text" name="" id="details" value=""></span><p>
+		<button type='button' class='joinboxbtn' onclick='setAddress(),hidebox()'>주소저장</button>
+		</div>
+	</div>
+</div>
+</body>
+</html>

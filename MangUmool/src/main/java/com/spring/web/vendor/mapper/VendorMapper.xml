@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.spring.web.vendor.mapper.VendorMapper">
+<!-- 
+	<insert id='join'
+			parameterType='com.spring.web.vendor.vo.Vendor'>
+			
+	INSERT INTO TRADI_VENDOR(VNUM,VID,PWD,COM_NUMBER,BRANDNAME,CEONAME,ADDRESS,WEBSITE,PHONE)
+	VALUES(VENDOR_SEQ.NEXTVAL,#{vid},#{pwd},#{com_number},#{brandname},#{ceoname},#{address},#{website},#{phone})			
+	</insert>
+	
+	<select id='idDupliCheck'
+			parameterType="String"
+			resultType="String">
+			
+			SELECT VID FROM TRADI_VENDOR WHERE VID=#{vid}
+			
+	</select>
+	
+	<select id="login"
+			parameterType="com.spring.web.vendor.vo.Vendor"
+			resultType='com.spring.web.vendor.vo.Vendor'>
+					SELECT VNUM,VID,PWD,PERMIT FROM TRADI_VENDOR WHERE VID=#{vid} AND PWD=#{pwd}	
+	</select>		
+
+-->	
+	<!-- 아이템 등록 -->
+	<insert id='additem'
+			parameterType='com.spring.web.vendor.vo.Items'>
+			
+	INSERT INTO TRADI_ITEMS
+	(ITEMCODE,NAME,TYPE,ALCOHOL,MATERIAL,PRICE,BRANDNAME,PRODUCINGAREA,QUANTITY,DETAILCONTENT,VNUM)
+	VALUES
+	(ITEMCODE_SEQ.NEXTVAL,#{name},#{type},#{alcohol},#{material},#{price},#{brandname},#{producingarea},#{quantity},#{detailcontent},#{vnum})			
+	</insert>
+	
+	
+	<!-- 첨부파일 등록 -->
+	<update id="addimage"
+			 parameterType="list">         
+       
+       INSERT INTO TRADI_I_ATTACH (ianum, itemcode, fname)
+       SELECT TRADI_I_ATTACH_SEQ.NEXTVAL AS imgnum, t.* FROM
+       (
+           <foreach collection="list" item="item" index="index" separator="union all">
+                SELECT (SELECT MAX(itemcode) FROM TRADI_ITEMS) AS ITEMCODE, #{item.fname} FROM DUAL
+           </foreach>
+       )t       
+   </update>   		
+	
+	<!-- vendor가 등록한 모든 아이템 목록 불러내기 -->
+	<select id="itemlist"
+			parameterType="integer"
+			resultType='com.spring.web.vendor.vo.Items'>
+			
+			SELECT *
+			FROM TRADI_ITEMS 
+			WHERE vnum = #{vnum}
+			
+	</select>		
+
+
+  	<!--  아이템 상세정보 불러내기 -->
+	<select id="getDetail"
+			parameterType="com.spring.web.vendor.vo.Items"
+			resultType='map'>
+			
+	 SELECT a.itemcode,a.name,a.type,a.price,a.brandname,a.producingarea,a.regdate,a.detailcontent,a.quantity,a.material,
+	 a.vnum,a.post,a.alcohol,b.ianum,b.fname,r.score,r.rnum
+	 FROM TRADI_ITEMS a 
+	 LEFT OUTER JOIN TRADI_I_ATTACH b ON a.itemcode=b.itemcode
+	 LEFT OUTER JOIN TRADI_REVIEW r ON a.itemcode=r.itemcode	
+	 WHERE a.itemcode=#{itemcode}		
+			
+	</select>
+	
+	<!-- 첨부파일 등록 -->
+	<update id="addEditImage"
+			 parameterType="list">         
+       
+       INSERT INTO TRADI_I_ATTACH (ianum, itemcode, fname)
+       SELECT TRADI_I_ATTACH_SEQ.NEXTVAL AS imgnum, t.* FROM
+       (
+           <foreach collection="list" item="item" index="index" separator="union all">
+                SELECT #{item.itemcode}, #{item.fname} FROM DUAL
+           </foreach>
+       )t       
+   </update>   	
+	
+	
+	<delete id="deleteImg"
+			parameterType="com.spring.web.vendor.vo.I_Attach">
+			
+		DELETE FROM TRADI_I_ATTACH WHERE IANUM=#{ianum}	
+			
+	</delete>
+	
+	
+	<!--  아이템 수정 -->
+	<update id="itemUpdate"
+			parameterType="com.spring.web.vendor.vo.Items">
+			
+		UPDATE TRADI_ITEMS 
+		SET price=#{price},detailcontent=#{detailcontent},alcohol=#{alcohol},producingarea=#{producingarea},quantity=#{quantity},post=0
+		WHERE itemcode=#{itemcode}			
+			
+	</update>
+
+
+	<!-- 등록된 아이템 삭제 -->
+	<update id="itemPostWait"
+			parameterType="integer">
+			
+		UPDATE TRADI_ITEMS 
+		SET POST = 1
+		WHERE ITEMCODE=#{itemcode}	
+		
+	</update>
+	
+	
+	<!-- 주문 리스트 -->
+	<select id="requestOrder"
+			parameterType="integer"
+			resultType="map">
+	
+		SELECT a.onum,a.cnum,a.toaddress,a.tophone,a.toname,a.fromaddress,a.fromname,a.fromphone,a.requestmemo,a.orderdate,b.oinum,b.confirm,b.name,b.price,b.amount,b.itemcode,b.deliverycode,b.delicomp
+		FROM TRADI_ORDER a
+		LEFT OUTER JOIN  TRADI_ORDERITEM b
+		ON a.onum = b.onum
+		LEFT OUTER JOIN  TRADI_ITEMS i
+		ON b.itemcode=i.itemcode
+		WHERE i.vnum=#{vnum}
+		ORDER BY b.CONFIRM ASC, a.ORDERDATE DESC		
+		
+	</select>
+
+	<!-- 액셀파일 저장용도 주문요청 리스트 -->
+	
+	<select id="downExcel"
+			parameterType="integer"
+			resultType="map">
+		SELECT a.onum,a.cnum,a.toaddress,a.tophone,a.toname,a.fromaddress,a.fromname,a.fromphone,a.requestmemo,a.orderdate,b.oinum,b.confirm,b.name,b.price,b.amount,b.itemcode,b.deliverycode,b.delicomp
+		FROM TRADI_ORDER a
+		LEFT OUTER JOIN  TRADI_ORDERITEM b
+		ON a.onum = b.onum
+		LEFT OUTER JOIN  TRADI_ITEMS i
+		ON b.itemcode=i.itemcode
+		WHERE i.vnum=#{vnum}
+		AND b.confirm=0
+		ORDER BY a.ORDERDATE,a.ONUM,b.CONFIRM DESC
+	</select>
+	
+	<!-- 송장등록하기-->
+	<update id="setDelicode"
+			parameterType="com.spring.web.market.vo.OrderItem">
+	
+		UPDATE TRADI_ORDERITEM
+		SET deliverycode=#{deliverycode},confirm=1, delicomp=#{delicomp}
+        WHERE oinum=#{oinum}
+	
+	</update>
+	
+	<!-- 주문된 수량 빼기 -->
+	<update id="subQuantity"
+			parameterType="com.spring.web.market.vo.OrderItem">
+	
+		UPDATE TRADI_ITEMS
+        SET quantity=quantity-#{amount}
+        WHERE itemcode=#{itemcode}		
+	
+	</update>
+	
+	<!-- 배송완료등록 -->
+	<update id="completeDelivery"
+			parameterType="Integer">
+			
+		UPDATE TRADI_ORDERITEM
+        SET CONFIRM = 2
+        WHERE oinum=#{oinum}		
+			
+	</update>
+
+
+	<select id="showQuestion"
+			parameterType="Integer"
+			resultType="map">
+			
+		SELECT q.qnum,q.itemcode,q.cnum,q.content as qcontent,q.regdate as qregdate,a.annum,a.regdate as aregdate, a.content as acontent, it.name
+		FROM TRADI_QUESTION q
+		LEFT OUTER JOIN TRADI_ANSWER a
+		ON q.qnum = a.qnum
+		LEFT OUTER JOIN TRADI_ITEMS it
+		ON q.itemcode = it.itemcode
+		WHERE it.vnum = #{vnum}
+		ORDER BY q.regdate DESC
+			
+	</select>
+	
+	<insert id="regAnswerByQnum"
+			parameterType="com.spring.web.market.vo.Answer">
+			
+		INSERT INTO TRADI_ANSWER(ANNUM,ITEMCODE,VNUM,CONTENT,QNUM)
+		VALUES(TRADI_ANSWER_SEQ.NEXTVAL,#{itemcode},#{vnum},#{content},#{qnum})
+			
+	</insert>
+	
+	<!-- 주문 취소요청 리스트 -->
+	<select id="getCancleRequest"
+			parameterType="integer"
+			resultType="map">
+	
+		
+		SELECT ca.*,o.price,o.name,o.amount,o.confirm,t.orderdate,c.phone,c.nickname,c.email
+		FROM TRADI_CANCLE_ORDER ca
+		LEFT OUTER JOIN TRADI_ORDERITEM o
+		ON ca.oinum = o.oinum
+		LEFT OUTER JOIN TRADI_ITEMS i
+		ON i.itemcode = ca.itemcode
+		LEFT OUTER JOIN TRADI_ORDER t
+		ON t.onum = o.onum
+		LEFT OUTER JOIN TRADI_CUSTOMER c
+		ON c.cnum = ca.cnum
+		WHERE i.vnum = #{vnum}
+		ORDER BY ca.REGDATE DESC
+		
+	</select>
+	
+	<!-- 취소승인 -->
+	
+	<update id="approveCancleOrder"
+			parameterType="Integer">
+			
+		UPDATE TRADI_ORDERITEM
+		SET CONFIRM = 4
+		WHERE OINUM = #{oinum}					
+			
+	</update>	
+	
+	
+	
+	
+	
+	
+	
+	
+</mapper>   

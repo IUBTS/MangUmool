@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>LOGIN</title>
+
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	
+	function loginn()
+	{			
+		var serData = $('#loginned').serialize();             	
+
+		$.ajax({
+				url : '/doLogin',	
+				method : 'post',
+				data : serData,  											
+				cache : false,       		
+				dataType:'json',                      
+				success : function(res)                
+				{	
+					alert('로그인성공');
+					location.href=res.url;					
+					
+				},
+				error : function(xhr,status,err)
+				{
+					alert(err);	
+				}
+				});		
+		}
+</script>
+<style> 
+body{width:100%; height: 100%; margin:0;  background-color:#F8ECDB;}
+#login_box{ margin:auto; width:500px; height:300px; padding:auto; top:100px; left:50px; position:relative;}
+
+#loginned input:focus{
+    border-color:#0982f0;
+    outline: none;
+}
+
+#cid {width:150px;  border-color:gray; outline: none; padding-left:5px;}
+#pwd {width:148px;  border-color:gray; outline: none; padding-left:5px;}
+
+.btn {
+      box-shadow: 0px 4px 4px #74a3b0;
+	  position: relative;
+	  border: 0;
+	  padding: 5px 10px;
+	  display: inline-block;
+	  text-align: center;
+	  color: white;	
+	  background-color: #7fb1bf;
+	  border-radius:0.3em;
+	  }
+.btn:active {box-shadow: 0 0 #74a3b0; background-color: #709CA8; top: 4px; border-radius:0.3em; }
+
+</style>
+</head>
+<body>
+
+<div id="login_box" >
+	<div>
+		<img style="width:400px;height:350px" src="/loginframe2.png">
+	</div>
+	<div style="position:absolute; transform:translate(39%,-120%); text-align:center;" >
+		<div id="logo" >
+			<a href="/drinks/"><img style="width:100px;height:100px;"  src="/mangwoomul.png"></a>		
+		</div>
+		<p>
+		<form id='loginned' name='loginned'>
+		
+		<div style="margin-bottom:5px;">
+			<label>아이디</label>　 <input type='text' id='uid' name='uid' value='pika'> 
+		</div>
+		<div>
+			<label>비밀번호</label>　<input type='password' id='pwd' name='pwd' value='1234'> <p>
+		</div>
+		
+		</form>
+			<button class='btn' type='button' onclick='loginn();'>로그인</button>　
+			<a href="/user/customer/join"><button class='btn'>회원가입</button></a><p>	
+			<a href="/user/vendor/login">판매자 로그인</a>
+	</div>
+</div>
+
+
+</body>
+</html>

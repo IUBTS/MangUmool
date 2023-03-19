@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ADMIN_MAIN</title>
+
+<style>
+#logoBox{width:110px; margin:auto; margin-top:50px;}
+#content{ width:800px; height: 550px; margin:auto; margin-top:20px; border-left: 3px double silver; border-right: 3px double silver; 
+		  padding-left:60px; padding-right:40px; padding-top:10px;
+		}
+h1{text-align:center; margin-top:10px; font-size:35px;}
+
+.func{ margin-top:30px;}
+</style>
+</head>
+<body>
+<div id="logoBox">
+	<a href='/admin/main'><img style="width:110px;height:110px" src="/mangwoomul.png"></a>
+</div>
+<h1>고객관리 서비스</h1>
+
+<div id="content">
+	
+	<div class="func">
+	<h3>판매자 요청 목록</h3>
+		<a href='/admin/requestPostItem'><button>상품판매 요청 리스트</button></a>
+		<a href='/admin/requestJoinVendor'><button>판매자 가입 요청 리스트</button></a>
+	</div>	
+	<p>
+	<div class="func">
+	<h3>취소된 주문 목록</h3>
+		<form action="/admin/getCancleList" method="post">
+			시작 기준일 : <input type="date" name="start" value="2023-02-01">
+			끝 기준일 : <input type="date" name="end" value="2023-02-28">
+			판매자 아이디 : <input type="text" name="vid" value="super">	
+			<button type="submit">목록 열기</button>
+		</form>	
+	</div>	
+	<p>
+	<div class="func">
+		<h3>기간별 주문 목록</h3>
+		<form action="/admin/getOrderList" method="post">
+			시작 기준일 : <input type="date" name="start" value="2023-02-01">
+			끝 기준일 : <input type="date" name="end" value="2023-02-28">
+			판매자 아이디 : <input type="text" name="vid" value="super">	
+			<button type="submit">목록 열기</button>
+		</form>
+	</div>	
+	<div class="func">
+		<h3>주문번호로 주문검색하기</h3>
+		<form action="/admin/getOrder" method="post">	
+		 주문번호 : <input type="number" name="oinum" value="107">	
+			<button type="submit">목록 열기</button>
+		</form>
+	</div>	
+	<div class="func">
+		<h3>고객 아이디 검색하기</h3>
+		<form action="/admin/findUser" method="post">	
+		 주문번호 : <input type="text" name="cid" value="pika">	
+			<button type="submit">검색</button>
+		</form>
+	</div>	
+	<div class="func">
+		<h3>판매자 아이디 검색하기</h3>
+		<form action="/admin/findVendor" method="post">	
+		 주문번호 : <input type="text" name="vid" value="super">	
+			<button type="submit">검색</button>
+		</form>
+	</div>
+</div>
+
+</body>
+</html>

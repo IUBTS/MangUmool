@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+.iteminfo>a{text-decoration:none; color:#465578; font-size:18px; }
+h1{
+	 color:#465578;
+		margin:0;
+		padding-bottom:50px;
+}
+#listInfo{width:800px; margin:auto; padding-top:50px; text-align:center;}
+.iteminfo{ border-radius:0.3em; padding:10px; width:500px; margin:auto; margin-bottom:20px;}
+.iteminfo:hover{
+	box-shadow: 5px 10px 10px 10px #ddd;
+	font-weight: bold;
+	transition: box-shadow 0.5s linear;
+}
+
+</style>
+<meta charset="utf-8">
+<title>vendor_items</title>
+</head>
+<body>
+
+<div th:include="@{/fragments/vendorNavi.html}"></div>
+<div id="listInfo">
+	<div>
+		<h1>벤더가 등록한 상품 리스트</h1>
+	</div>	
+	<div >	
+		<div class="iteminfo" th:each="l : ${list}">
+			<a th:href="'/vendor/detail/'+${l.itemcode}">
+			<label>상품코드</label> <span th:text="${l.itemcode}"></span><br>
+			<label>상품명</label>　<span th:text="${l.name}"></span><br>
+			<label>가격</label>　<span th:text="${l.price}+'원'"></span><br>
+			<label>게시상태</label>　
+				<span th:if='${l.post==0}' style='color:gold' th:text="'판매여부 승인대기 상태'"></span>
+				<span th:if='${l.post==1}' style='color:blue' th:text="'판매 리스트 게시중'"></span>
+				<span th:if='${l.post==2}' style='color:red' th:text="'판매 중지'"></span>
+			<br><label>남은재고</label>　
+				<span th:if='${l.quantity>10}' th:text='${l.quantity}'></span>
+				<span th:if='${1<=l.quantity&&l.quantity<=10}' th:text="'재고부족'+${l.quantity}" style='color:gold;'></span>
+				<span th:if='${l.quantity==0}' th:text="'매진'+${l.quantity}" style='color:red;'></span><br>
+			</a>
+		</div>
+		<div style="text-align:center; margin:auto; width:400px; margin-left:200px;">		
+			<span th:if="${end!=0}" style="font-size:32px; padding-left:20px;" th:each="page:${#numbers.sequence(1,end)}">
+				<a style="text-decoration: none; color: gray;" th:href="@{'/vendor/list'(pg=${page})}">
+					<span th:if="${page}==${pg}" style="color:red;" th:text="${page}"></span>
+					<span th:unless="${page}==${pg}" style="color:gray;" th:text="${page}"></span>				
+				</a>				
+			</span>
+		</div>
+	</div>
+</div>
+</body>
+</html>

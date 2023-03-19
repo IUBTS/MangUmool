@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>ADD ITEMS</title>
+<style>
+
+body,html{
+
+  width:100%;
+  height:100vh;
+}
+
+.t_info{
+ 	width:800px;
+    height:500px;
+    color:#465578;
+    padding-top:20px;
+}    
+
+.t_info ul{
+	list-style: none; line-height: 29px; padding:0; 
+}
+
+.b_info1{
+	margin-bottom:50px; border:5px double gray; padding: 10px; border-radius:0.3em; width:500px; margin:auto;
+}
+
+
+.b_info_label{
+	width:100px;
+	margin-right:50px;
+}
+
+a {
+  text-decoration: none;
+	color: #D6879E;
+}
+h1{
+	text-align:center;
+	color:#465578;
+	margin:0;
+}
+
+.b_info2_left { margin-bottom:30px;}
+
+.b_info2 { margin-bottom:50px; border:5px double gray; padding: 10px; border-radius:0.3em; width:500px;margin:auto; }
+
+</style>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+$(function(){
+	
+	$('#btnUpload').on('click', function(event) {
+	    event.preventDefault();
+	    
+	    var form = $('#uploadForm')[0]
+	    var data = new FormData(form);	  
+	    var name = $('#name').val();
+
+	    $('#btnUpload').prop('disabled', true);	   	   
+	    
+	    $.ajax({
+	        type: "POST",
+	        enctype: 'multipart/form-data',
+	        url: "/vendor/add",	        
+	        data: data,
+	        dataType: 'text',     /* text, json, script, html, xml 등 */
+	        processData: false,   /* 디폴트인 Query String 변환 하지 않도록 설정 */
+	        contentType: false,   /* 디폴트 "application/x-www-form-urlencoded; charset=UTF-8" */
+	        cache: false,
+	        timeout: 600000,      /* 시간 제한 없음 */
+	        success: function(res) 
+	        {
+	        	alert(res);
+	           $('#btnUpload').prop('disabled', false);
+	           alert('success');
+	           location.href='/vendor/list';
+	        },
+	        error: function (e) {
+	            $('#btnUpload').prop('disabled', false);
+	            alert('fail');
+	        }
+	    });
+	})})
+
+/* --미리보기 -- */	
+	$(document).ready(function (e){
+	    $("input[type='file']").change(function(e){
+	
+	      $('#preview').empty();
+	
+	      var files = e.target.files;
+	      var arr =Array.prototype.slice.call(files);
+	      
+	      for(var i=0;i<files.length;i++){
+	        if(!checkExtension(files[i].name,files[i].size)){
+	          return false;
+	        }
+	      }     
+	      preview(arr);         
+	    });
+	    
+	    function checkExtension(fileName,fileSize){
+	
+	      var regex = new RegExp("(.*?)\.(exe|sh|zip|alz)$");
+	      var maxSize = 20971520;
+	      
+	      if(fileSize >= maxSize){
+	        alert('파일 사이즈 초과');
+	        $("input[type='file']").val("");
+	        return false;
+	      }
+	      
+	      if(regex.test(fileName)){
+	        alert('업로드 불가능한 파일이 있습니다.');
+	        $("input[type='file']").val("");
+	        return false;
+	      }
+	      return true;
+	    }
+	    
+	    function preview(arr){
+	      arr.forEach(function(f){
+	        
+	        var fileName = f.name;
+	        if(fileName.length > 10){
+	          fileName = fileName.substring(0,15)+"...";
+	        }
+	        
+	        var str = '<div style="display: inline-flex; padding: 10px;"><li style="list-style:none;">';
+	        str += '<span>'+fileName+'</span><br>';
+	        
+	        if(f.type.match('image.*')){
+	          var reader = new FileReader(); 
+	          reader.onload = function (e) {           
+	            str += '<img src="'+e.target.result+'" title="'+f.name+'" width=150 height=150 />';
+	            str += '</li></div>';
+	            $(str).appendTo('#preview');
+	          } 
+	          reader.readAsDataURL(f);
+	        }else{
+	          str += '<img src="/resources/img/fileImg.png" title="'+f.name+'" width=150 height=150 />';
+	          $(str).appendTo('#preview');
+	        }
+	      });
+	    }
+	  });
+</script>	
+
+
+
+</head>
+<body>
+<div th:include="@{/fragments/vendorNavi.html}"></div>
+<div style="width:800px; margin:auto; height:100vh;">
+	<h1 style="padding-top:40px;">상품 등록</h1>
+	<form id='uploadForm' >	
+	<div class='t_info'>
+		<div class='b_info1'>
+			<ul style="float:left;">
+				<li><span><label class='b_info_label'>게시자 </label></span></li>
+				<li><span><label class='b_info_label'>상품명</label></span></li>
+				<li><span><label class='b_info_label'>주종</label></span></li>
+				<li><span><label class='b_info_label'>도수</label></span></li>
+				<li><span><label class='b_info_label'>주원료</label></span></li>
+				<li><span><label class='b_info_label'>소비자가격</label></span></li>
+				<li><span><label class='b_info_label'>재고량</label></span></li>
+				<li><span><label class='b_info_label'>브랜드명</label></span></li>
+				<li><span><label class='b_info_label'>원산지</label></span></li>
+			</ul>
+			<ul>
+				<li>[[${session.vid}]]</li>
+				<li><span><input name='name' id='name' type='text' placeholder='상품명' value='seoul'></span></li>
+				<li>
+					<span>
+						<select name='type'>
+							<option value="소주">소주</option>
+							<option value="막걸리">막걸리</option>
+							<option value="증류주">증류주</option>
+							<option value="발효주">발효주</option>
+							<option value="과실주">과실주</option>
+							<option value="와인">와인</option>
+						</select>	
+					</span>
+				</li>
+				<li><span><input name='alcohol' type='number' step='0.01' placeholder='도수' value='20'></span></li>
+				<li><span><input name='material' type='text' placeholder='주원료' value='쌀'></span></li>
+				<li><span><input name='price' type='number' min='500' placeholder='가격' value='500'></span></li>
+				<li><span><input name='quantity' type='number' placeholder='재고량' value='200'></span></li>
+				<li><span><input name='brandname' type='text' placeholder='브랜드명' value='진로'></span></li>
+				<li><span><input name='producingarea' type='text' placeholder='원산지' value='서울'></span></li>
+			</ul>			
+		</div>		
+		<p>		
+		<div class='b_info2'>	
+			<div class='b_info2_left'><span><label>상세정보</label></span></div>
+			<div class='b_info2_right'><textarea name='detailcontent' type='text' placeholder='상세정보' cols='75' rows='10'>제품의 정보를 입력하세요</textarea></div>
+		</div>
+		<div id="preview" style="border:5px double gray; height:180px; margin-top:10px;margin-bottom:10px;"></div>
+		<div class='a_info'>			
+				<label>썸네일이미지첨부</label>
+				<input type="file" name="thumimg"><br>	
+			    <label>이미지첨부</label>　
+				<input type="file" name="files" multiple="multiple">
+		</div>
+		
+	<button style="width:100px; height:33px; font-size:20px; float:right;" type="button" id='btnUpload'>상품등록</button>
+	</div>
+	</form>
+</div>
+</body>
+</html>

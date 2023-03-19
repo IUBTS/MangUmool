@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>VENDORLOGIN</title>
+
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+	
+	function loginn()
+	{			
+		var serData = $('#loginned').serialize();    
+		$.ajax({
+				url : '/doLogin',	
+				method : 'post',
+				data : serData,  											
+				cache : false,       
+		
+				dataType:'json',                      
+				success : function(res)                
+				{					
+					alert(res.msg);
+					if(res.permit==2)
+					{	
+						location.href='/vendor/orderlist';
+					}
+					else if(res.permit==1)
+					{
+						alert(res.msg);
+						location.href='/user/vendor/waitingJoin';
+					}
+				},
+				error : function(xhr,status,err)
+				{
+					alert(err);	
+				}
+				});		
+		}
+</script>
+<style>
+#loginInputForm{width:300px; height:300px; margin:auto; top:10px; position:relative; border:10px double #3D1B14; 
+				border-radius:0.8em; text-align:center; padding-top:50px;}
+h1{text-align:center; margin-top:-20px;margin-bottom:50px; }
+#loginned{margin-bottom:30px;}
+#vendor_logo_img{width:112px; margin:auto; margin-top:50px;}
+</style>
+</head>
+<body>
+<div id="vendor_logo_img">
+		<a href='/user/vendor/login'><img style="width:110px;height:110px" src="/mangwoomul.png"></a>	<p>
+</div>
+<div id="loginInputForm">
+	<h1>판매자 로그인</h1>
+	<form id='loginned' name='loginned'>
+		<label>I D</label>　<input type='text' id='uid' name='uid' value='vendi'> <p>
+		<label>PWD</label>　<input type='password' id='pwd' name='pwd' value='1234'> <p>
+	</form>
+	<button type='button' onclick='loginn();'>로그인</button>
+	<a href="/user/vendor/join"><button type='button'>회원가입</button></a>
+</div>
+</body>
+</html>

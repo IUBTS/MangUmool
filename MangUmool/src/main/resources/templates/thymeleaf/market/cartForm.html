@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CARTLIST</title>
+
+<style>
+
+
+</style>	
+<script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script>	
+<script type="text/javascript">
+	
+ $(function(){  
+     
+	  $('input[type="checkbox"]').attr('checked', true);
+	  
+	  var sum = 0;
+      $("input[type='checkbox']:checked").each(function () {
+        sum += parseInt($(this).val());
+      });
+      $("#result").text("선택한 상품의 총 금액 : " + sum);
+      $("#orderprice").val(sum);
+      
+	  
+		
+	   $("input[type='checkbox']").change(function () {
+		      var sum = 0;
+		      $("input[type='checkbox']:checked").each(function () {
+		        sum += parseInt($(this).val());
+		      });
+		      $("#result").text("선택한 상품의 총 금액 : " + sum);
+		      $("#orderprice").val(sum);
+		    });
+
+    });         		 
+ 
+ 
+ 	function anycheck()
+	{
+		 $('input[type="checkbox"]').attr('checked', false);
+		 checkprice();
+	}
+ 
+ 	function allcheck()
+	{
+		 $('input[type="checkbox"]').attr('checked', true);
+		 checkprice();
+	}
+ 	
+	function getPrice(itemindex){
+	
+	var num = $('#num'+itemindex).val();
+	var price = $('#price'+itemindex).val();
+	$('#result'+itemindex).val(num*price);
+	$('#ttresult'+itemindex).val(num*price);
+	$('#itemttlprice'+itemindex).val(num*price);
+	$('#amounts'+itemindex).val(num);
+	};
+	 
+	function checkprice() {
+      var sum = 0;
+      $("input[type='checkbox']:checked").each(function () {
+        sum += parseInt($(this).val());
+      });
+      $("#result").text("선택한 상품의 총 금액 : " + sum);
+      $("#orderprice").val(sum);
+	}
+	
+	function delitems() {
+       
+	  var test = $("input[name='cklist']");	
+	  var itemcodeList = new Array();
+	  var loop_cnt=0;
+	  
+      for (var i = 0; i < test.length; i++) {
+    	  if(test[i].checked)
+   		  {	
+    		var itemcode = test[i].nextElementSibling.value;
+    		var amount = test[i].nextElementSibling.nextElementSibling.value;    		
+    		var obj = itemcode;
+    		itemcodeList.push(obj)
+    		loop_cnt++;
+   		  }    	 
+  		}
+      if(loop_cnt==0){
+	  		alert("선택한 상품이 없습니다.");
+	  		return false;
+  		}
+      else
+      {
+    	  //icl = JSON.stringify(itemcodeList);
+    	  icl = itemcodeList;
+    	  
+    	  $.ajax({
+  			url:'/drinks/deltocart',
+  			type:'post',
+  			traditional: true,
+  			data:{icl:icl},
+  			dataType:'json',
+  			success: function(res){
+  				if(res.deleted)
+				{
+  					alert(res.msg);
+  					location.reload();
+				}
+  				else alert(res.msg);
+  					
+  			}, error: function(xhr,status,err){
+  				alert('에러: '+err);
+  			}			
+  		});    	  
+      } 		
+	}
+	
+	function buyitems() 
+	{
+		  var test = $("input[name='cklist']");	
+		  var itemList = new Array();
+		  var loop_cnt=0;
+		  
+	      for (var i = 0; i < test.length; i++) {
+	    	  if(test[i].checked)
+	   		  {
+	    		var itemcode = test[i].nextElementSibling.value;  //name값으로 바꿔보기
+	    		var amount = test[i].nextElementSibling.nextElementSibling.value;
+	    		var name = test[i].nextElementSibling.nextElementSibling.nextElementSibling.value;
+	    		var itemttlprice = test[i].nextElementSibling.nextElementSibling.nextElementSibling.nextElementSibling.value;
+	    		var obj = {"itemcode":itemcode,"amount":amount,"name":name,"itemttlprice":itemttlprice};
+	    		itemList.push(obj)
+	    		loop_cnt++;
+	   		  }    	 
+	  		}
+	      if(loop_cnt==0){
+		  		alert("선택한 상품이 없습니다.");
+		  		return false;
+	  		}
+	      else
+	      {	    	  
+	    	icl = JSON.stringify(itemList);
+	    	 
+	    	$('#orderlistform').val(icl);
+	    	$('#finform').submit();		    	  
+	      }	    	  
+	     }	  
+	
+
+	
+</script>
+
+</head>
+<body>
+<div th:include="@{/fragments/findnavi.html}"></div>
+<div th:include="@{/fragments/searchnavi.html}"></div>
+<div style="margin:auto; width:1200px; position:relative">
+	<div style="margin-top:30px; margin-left:120px; width:700px; float:left; position:relative">
+		<div style=" margin-bottom:50px;">
+			<button type='button' onclick="allcheck()">전체 체크선택</button>	
+			<button type='button' onclick="anycheck()">전체 체크해제</button>
+		</div>
+		<p>
+		<form>
+			<div th:if="${!#lists.isEmpty(list)}" th:each="item,itemStat : ${list}">
+				
+				<input type='checkbox' name='cklist' class='amount' th:id="ttresult+${itemStat.index}" th:value="${item.price*item.cart.amount}">		
+				<input type='hidden' name='itemcode' th:value="${item.cart.itemcode}">
+				<input type='hidden' th:id="amounts+${itemStat.index}" name='amount' th:value="${item.cart.amount}">
+				<input type='hidden' name='namelist' th:value="${item.name}">
+				<input type='hidden' th:id="itemttlprice+${itemStat.index}" name='itemttlprice' th:value="${item.price*item.cart.amount}">
+					
+				[[${itemStat.index+1}]]<img style="width:130px;height:130px;" th:src="@{'/'+${item.name}+'/'+${item.fname}}">
+				<span th:text="${item.name}"></span>	
+				<input type="number" th:id="price+${itemStat.index}" name='price' th:value="${item.price}" readonly="readonly" style="border:none; width:70px;" > 
+				<input type='number' th:id="num+${itemStat.index}" name='amountss' th:value="${item.cart.amount}" th:onchange="getPrice([[${itemStat.index}]]); checkprice();" min='1' max='10'>개 
+					
+				금액 : <input type="text" class='amount' th:id="result+${itemStat.index}" th:value="${item.price*item.cart.amount}"  style="border:none;" readonly="readonly">
+		
+			</div>
+			<div th:if="${#lists.isEmpty(list)}"> 장바구니에 담긴 상품이 없습니다. </div>
+			<p>
+			<div style=" margin-top:50px;">
+				<button type='button' onclick='buyitems()'>구매하기</button>
+				<button type='button' onclick='delitems()'>선택항목 삭제</button>
+			</div>
+		</form>
+		<form id='finform' action='/drinks/buyitems'  method='post'>
+			<input type='hidden' id='orderprice' name='orderprice' value="">
+			<input type='hidden' id='orderlistform' name='orderlistform' value="">
+		</form>
+	
+	</div>	
+<div style="width:300px; height:100px; margin-top:30px; float:right; position:sticky;">
+	<p id="result"></p>
+</div>
+
+</div>
+</body>
+</html>

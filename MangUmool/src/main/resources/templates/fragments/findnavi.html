@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title></title>
+<link rel="shortcut icon" type="image/x-icon" href="static/favicon.ico">
+<style>
+body{width:100%; margin:auto;}
+#nav{width:1200px;  margin:auto; height:170px; background-color:#F7F5EE ; }
+a {text-decoration:none;
+	color: black;}
+</style>
+</head>
+<body>	
+
+<div id='nav'>
+	<div style="text-align:right;font-size:15px; color:gray; font-weight:bold; background-color:#FFEEE0; ;width:100% ; margin-top:0; height:25px; padding-top:5px;">
+		<span th:if="${session.cnum!=null}" th:text="${session.nickname}+'님 환영합니다.'"></span>
+		<a th:if="${session.cnum!=null}" href='/user/customer/logout'> 　LOGOUT　　</a>
+		<a th:unless="${session.cnum!=null}" href='/user/customer/login'> 로그인 </a>
+		<a th:unless="${session.cnum!=null}" href='/user/customer/join'> 　회원가입　　　　</a>
+	</div>
+	<div style="padding-top:5px;">
+		<a style="margin-left:40px; float:left;" href='/drinks/'><img style="width:110px;height:110px" src="/mangwoomul.png"></a>	
+		<div style="margin-top:30px; margin-left:200px;">
+			<a style=" float:right; margin-right:50px; font-weight:bold;" href='/drinks/cartlist'><img style="width:38px; height:38px; " src="/bucketicon.png"><p style="margin:0;">장바구니</p></a>	
+			<a style=" float:right; margin-right:25px; font-weight:bold;" href='/customer/myorder'><img style="width:38px; height:38px;" src="/orderlist.png"><p style="margin:0;">주문목록</p></a>
+			<a style=" float:right; margin-right:30px; font-weight:bold;" href='/user/customer/myinfo'><img style="width:38px; height:38px;" src="/myinfoicon.png"><p style="margin:0;">내정보</p></a>		
+		</div>
+		<div style="margin-top:50px; margin-left:200px;">	
+			<form action='/drinks/find' method='get' >
+			<input text='text' id='keyword' name='keyword' onkeyup="if(window.event.keyCode==13){submit}" placeholder="검색어를 입력하세요 " style='padding-left:10px; width:320px; height:24.6px; border:3px solid; border-radius:0.3em; background-color:#d0e6e5;'>
+			</form>
+		</div>	
+	</div>
+</div>
+
+</body>
+</html>
