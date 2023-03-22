@@ -56,6 +56,7 @@
 	 LEFT OUTER JOIN TRADI_REVIEW r ON a.itemcode=r.itemcode	 
 	 LEFT OUTER JOIN TRADI_CUSTOMER c ON c.cnum=r.cnum
 	 WHERE a.itemcode=#{itemcode}		
+	 ORDER BY r.regdate DESC
 			
 	</select>
 	

@@ -33,11 +33,12 @@
 				받는 분 전화번호 : <span th:text="${o.tophone}"></span><br>
 				배송시 요청사항 :<span th:text="${o.requestmemo}"></span>
 			</div>
-		</div>		
+		</div>
+		<p>		
 		<div th:if="${orderinfo.orderitem.delicomp!=null}" style="padding-top:50px; margin-left:50px;">
 			<iframe th:src="@{'https://tracker.delivery/#/'+${orderinfo.orderitem.delicomp}+'/'+${orderinfo.orderitem.deliverycode}}" target="_blank" style="width:700px;height:400px;">이 브라우저는 해당 내용을 지원하지 않습니다.</iframe>
 		</div>
-		<div th:unless="${orderinfo.orderitem.delicomp!=null}">
+		<div th:unless="${orderinfo.orderitem.delicomp!=null}" style="font-size:22px; color:blue;">
 			상품 배송 준비중입니다.		
 		</div>
 

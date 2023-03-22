@@ -48,64 +48,6 @@ public class VendorController {
 	{		
 		return "thymeleaf/vendor/vloginForm";
 	}
-	/*
-	@GetMapping("/join")
-	public String addForm()
-	{		
-		return "thymeleaf/vendor/vjoinForm";
-	}
-	
-	@PostMapping("/join")
-	@ResponseBody
-	public Map<String,Boolean> join(Vendor vendor)
-	{
-		boolean joined = svc.join(vendor);
-		Map<String,Boolean> map = new HashMap<>();
-		map.put("joined", joined);		
-		return map;
-	}
-	
-	@PostMapping("/idDupliCheck")
-	@ResponseBody
-	public Map<String,Object> idCheck(@RequestParam("vid") String vid)
-	{		
-		Map<String,Object> map = svc.idChecked(vid);
-		return map;
-	}	
-		
-	@GetMapping("/login")
-	public String loginForm()
-	{
-		return "thymeleaf/vendor/vloginForm";	
-	}	
-	
-	@PostMapping("/login")
-	@ResponseBody
-	public Map<String,Object> login(Vendor vendor, HttpSession session)
-	{
-		Map<String,Object> map = svc.login(vendor);
-		
-		session.setAttribute("vid", map.get("vid"));
-		session.setAttribute("vnum", map.get("vnum"));
-		
-		return map;
-	}
-	
-	@GetMapping("/waitingJoin")
-	public String waitingJoinForm()
-	{
-		return "thymeleaf/vendor/joinWaitingForm";
-	}
-	
-	
-	
-	@GetMapping("/logout")
-	public String logout(SessionStatus status)
-	{		
-		session.invalidate();
-		return "thymeleaf/vendor/vloginForm";
-	}
-*/
 	
 	@GetMapping("/add")//아이템 등록form
 	public String addItemForm()
@@ -135,7 +77,7 @@ public class VendorController {
 	public String getList(@RequestParam(required =false, defaultValue="1") int pg,Model m)
 	{
 		int vnum = (int)session.getAttribute("vnum");
-		Map<String,Object> map = svc.getList(vnum,pg,2);
+		Map<String,Object> map = svc.getList(vnum,pg,3);
 		List<Items> list = (List<Items>)map.get("list");
 		
 		m.addAttribute("list",list);

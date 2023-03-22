@@ -15,13 +15,7 @@ import com.spring.web.vendor.vo.Vendor;
 
 @Mapper
 public interface VendorMapper {
-/*
-	public int join(Vendor vendor);
-	
-	public String idDupliCheck(String vid);
-	
-	public Vendor login(Vendor vendor);
-*/	
+
 	public int additem(Items items);
 	
 	public int addimage(List<I_Attach> list);

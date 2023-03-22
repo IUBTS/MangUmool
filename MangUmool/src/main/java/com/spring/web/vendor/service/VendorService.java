@@ -56,66 +56,6 @@ public class VendorService {
 	private VendorMapper mapper;
 		
 	private Path fileStroageLocation;
-/*
-	public Boolean join(Vendor vendor)
-	{	
-		return mapper.join(vendor)>0;
-	}
-	
-	public Map<String,Object> idChecked(String vid)
-	{
-		 Map<String,Object> map = new HashMap<>();
-		 
-		 if(mapper.idDupliCheck(vid)==null)
-		 {
-			 map.put("checked", true);
-			 map.put("msg", "사용가능한 아이디입니다.");			 
-		 }
-		 else
-		 {
-			 map.put("checked", false);
-			 map.put("msg", "입력하신 아이디가 존재합니다.");
-		 }	 
-		 return map;
-	}	
-	
-	
-	public Map<String,Object> login(Vendor vendor)
-	{				
-		 String vid = vendor.getVid();
-		 Map<String,Object> map = new HashMap<>();
-		
-		 Vendor vendorInfo = mapper.login(vendor); 
-		 
-		 if(vendorInfo!=null)
-		 {		 
-			String msg = "로그인 성공";
-			String url = "/vendor/";
-			boolean login = true;
-			
-			map.put("vnum", vendorInfo.getVnum());
-			map.put("permit", vendorInfo.getPermit());			
-			map.put("vid", vendorInfo.getVid());
-			map.put("login", login);
-			map.put("msg",msg);
-			map.put("url", url);
-				 
-			return map;
-		}
-		else
-		{
-			String msg = "로그인에 실패하였습니다.";
-			String url = "/vendor/login";			 
-			boolean login = false;
-			
-			map.put("login", login);			
-			map.put("msg",msg);
-			map.put("url", url);
-				 
-			return map;	
-		}
-	}	 	
-	*/	
 
 	public String addItem(Map map)
 	{

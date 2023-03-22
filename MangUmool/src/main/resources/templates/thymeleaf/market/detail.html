@@ -348,7 +348,8 @@ function buynow()
 </div>
 
 <div id="qalist" style="width:700px;  position:relative; top:100px;  text-align:left; margin:auto; padding-bottom:50px;">
-	<div th:if="${session.cnum}" style="float:right">
+	<div style="width:700px; height:50px;">
+	<div th:if="${session.cnum}" style="float:right;">
 		<button type="button" onclick="addQuestion()">문의하기</button>
 		<dialog class='dialogs' id="dialog" >					
 		  <form class='QuestionForm' id="questionform">					  
@@ -366,10 +367,11 @@ function buynow()
 		  </div>					  
 		</dialog>	
 	</div>
-	<div th:unless="${session.cnum}" style="text-align:right; font-size:18px; font-weight:bold;">
+	<div th:unless="${session.cnum}" style="text-align:right; font-size:18px; font-weight:bold; margin-bottom:50px;">
 		문의하기는 로그인이 필요한 기능입니다.
 	</div>
-	<div th:each="qa : ${drink.qalist}" style="border:1px solid silver; width:700px; margin:auto; margin-top:20px; padding:20px;">
+	</div>
+	<div th:each="qa : ${drink.qalist}" style="border:1px solid silver; width:700px; margin:auto; margin-top:10px; padding:20px;">
 		문의내용 : [[${qa.question.content}]] 작성일 : [[${qa.question.regDate}]]<p>
 		<div th:if="${qa.answer}">
 			판매자 : [[${qa.answer.content}]]  작성일 [[${qa.answer.regDate}]]

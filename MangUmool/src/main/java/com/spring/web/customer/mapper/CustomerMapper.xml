@@ -2,67 +2,6 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.spring.web.customer.mapper.CustomerMapper">
-<!-- 
-	<insert id='join'
-			parameterType='com.spring.web.customer.vo.Customer'>
-			
-		INSERT INTO TRADI_CUSTOMER(CNUM,CID,PWD,CNAME,NICKNAME,ADDRESS,PHONE,EMAIL,BIRTH)
-		VALUES(CUSTOMER_SEQ.NEXTVAL,#{cid},#{pwd},#{cname},#{nickname},#{address},#{phone},#{email},#{birth})			
-	</insert>
-	
-	<select id='idDupliCheck'
-			parameterType="String"
-			resultType="String">
-			
-			SELECT CID FROM TRADI_CUSTOMER WHERE CID=#{cid}
-			
-	</select>
-	
-	
-	
-	<select id="login"
-			parameterType="com.spring.web.customer.vo.Customer"
-			resultType='com.spring.web.customer.vo.Customer'>
-					SELECT CNUM,CID,PWD,NICKNAME FROM TRADI_CUSTOMER WHERE CID=#{cid}	AND PWD=#{pwd}	
-	</select>		
-
-	
-	<select id='getmyinfo'
-			parameterType="Integer"
-			resultType="com.spring.web.customer.vo.Customer">
-	
-		SELECT * FROM TRADI_CUSTOMER WHERE CNUM=#{cnum}
-	
-	</select>
-
-	<select id="checkPwd"
-			parameterType="com.spring.web.customer.vo.Customer"
-			resultType="Integer">
-	
-		SELECT cnum FROM TRADI_CUSTOMER 
-		WHERE CNUM=#{cnum} AND PWD=#{pwd}
-		
-	</select>
-	
-	
-	<update id="updatePwd"
-			parameterType="com.spring.web.customer.vo.Customer">
-	
-		UPDATE TRADI_CUSTOMER
-		SET PWD = #{pwd}
-		WHERE CNUM = #{cnum}		
-			
-	</update>		
-	
-	<update id='editEmail'
-			parameterType='com.spring.web.customer.vo.Customer'>
-						
-		UPDATE TRADI_CUSTOMER SET email=#{email}
-		WHERE CNUM = #{cnum}
-			
-	</update>
-	
--->
 
 	<select id='getmyorder'
 			parameterType="Integer"
@@ -120,24 +59,6 @@
 
 	
 	</select>
-<!-- 
-	<update id="updateAddress"
-			parameterType="com.spring.web.customer.vo.Customer">
-			
-		UPDATE TRADI_CUSTOMER
-		SET ADDRESS=#{address} 
-		WHERE CNUM = #{cnum}	
-			
-	</update>
-	<update id="updatePhone"
-			parameterType="com.spring.web.customer.vo.Customer">
-			
-		UPDATE TRADI_CUSTOMER
-		SET PHONE = #{phone}
-		WHERE CNUM = #{cnum}	
-			
-	</update>
--->
 
 
 </mapper>   
