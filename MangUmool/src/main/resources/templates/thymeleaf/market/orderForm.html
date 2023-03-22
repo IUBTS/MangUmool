@@ -117,24 +117,24 @@
 </head>
 <body>
 <div th:include="@{/fragments/findnavi.html}"></div>
-<div style="margin:auto; width:40%; padding-left:200px;">
+<div style="margin:auto; width:800px; padding-left:150px; font-size:18px; margin-top:100px; border-left:1px solid silver; border-right:1px solid silver;">
 	<form action="/drinks/saveorder" id='orderList' name='orderList' method="post">	
 		<div style='margin-top:25px; margin-bottom:15px; border-bottom:0.2px solid gray; width:80%'>구매자 정보</div>	
-			<label>이름</label><span th:text="${cus.cname}"></span> <br>
-			<label>휴대폰번호</label><span th:text="${cus.phone}"></span> <br>
-			<label>E-mail</label><span th:text="${cus.email}"></span> <br>						
+			<label>이름 : </label><span th:text="${cus.cname}"></span> <br>
+			<label>휴대폰번호 : </label><span th:text="${cus.phone}"></span> <br>
+			<label>E-mail : </label><span th:text="${cus.email}"></span> <br>						
 			<input type='hidden' name='cnum' id='cnum' th:value="${cus.cnum}">			
 			<input type='hidden' name='fromname' id='fromname' th:value="${cus.cname}">
 			<input type='hidden' name='fromphone' id='fromphone' th:value="${cus.phone}">
 			<input type='hidden' name='fromaddress' id='fromaddress' th:value="${cus.address}">
-		<p>
+		<p style="height:30px;">
 		
 		<div style='margin-top:25px; margin-bottom:15px; border-bottom:0.2px solid gray; width:80%'>받는사람 정보</div>
 			<label>이 름</label>　　　　<input type='text' name='toname' id='toname' th:value="${cus.cname}"><br>
 			<label>휴대폰 번호</label>　 <input type='text' name='tophone' id='tophone' th:value="${cus.phone}"><br>
-			<label>주 소</label>　　　<input type='text' name='toaddress' id='toaddress' th:value="${cus.address}"><br>
-			<label>배송요청사항</label>　<input type='text' name='requestmemo' id='requestmemo' th:value="'배송전 연락바랍니다.'"><br>
-		<p>
+			<label>주 소</label>　　　<input type='text' name='toaddress' id='toaddress' th:value="${cus.address}" style="width:500px;"><br>
+			<label>배송요청사항</label>　<input type='text' name='requestmemo' id='requestmemo' th:value="'배송전 연락바랍니다.'" style="width:476px;"><br>
+		<p style="height:10px;">
 		
 		<div style='margin-top:25px; margin-bottom:15px; border-bottom:0.2px solid gray; width:80%'>구매 상품 목록</div>
 		<div th:if=${oneitem!=null}>
@@ -146,9 +146,10 @@
 				<input type='hidden' name='amount' id='amount' th:value='${amount}'>
 				<input type='hidden' name='itemttlprice' id='itemttlprice' th:value='${oneitem.price*amount}'>
 			</div>
-			<p>
+			<p style="height:10px;">
 			<div style='margin-top:25px; margin-bottom:15px; border-bottom:0.2px solid gray; width:80%'>결제 정보</div>
 			<span th:text="'총 상품가격 : ' +${oneitem.price*amount} + ' 원'"></span>
+		<p style="height:10px;">
 		</div>
 		
 		<div th:if=${list!=null}>
@@ -166,8 +167,8 @@
 		</div>
 		<input th:if=${oneitem!=null} type='hidden' name='ttlprice' id='ttlprice' th:value='${oneitem.price*amount}'>
 		<input th:if=${list!=null} type='hidden' name='ttlprice' id='ttlprice' th:value='${ttlprice}'>
-		<button type='button' onclick='gopay();'>결제하기</button>
-		<button type='button' onclick='gocard();'>결제하기</button>
+		<button type='button' onclick='gopay();'>카카오 간편결제</button>
+		<button type='button' onclick='gocard();'>카드 결제</button>
 	</form>
 </div>
 </body>

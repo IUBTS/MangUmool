@@ -57,8 +57,13 @@ $(function(){
 
 function addcart()
 {
+	var cnum= '[[${session.cnum}]]';
+	if(cnum=="")
+	{
+		alert('로그인이 필요합니다.');
+		location.href="/user/customer/login";
+	}
 	var serData = $('#getitems').serialize();
-	
 	$.ajax({
 			url : '/drinks/addcart',	
 			method : 'post',
@@ -86,7 +91,6 @@ function addcart()
 
 function buynow()
 {		
-	
 	var serData = $('#getitems').serialize();
 	$.ajax({
 			url : '/drinks/buynow',	
@@ -138,8 +142,6 @@ function buynow()
 		var itemcode = $('#itemcode').val();
 		var content = $('#content').val();
 		serData = $('#questionform').serialize();
-		
-		alert(itemcode + content);
 		
 		$.ajax({
 			url : '/drinks/regquestion',	
@@ -273,7 +275,7 @@ function buynow()
 	<div style='width:1200px; height:40px; margin:0 auto; background-color:#d0e6e5; position:sticky; top: 0; z-index: 2; text-align:center;'>
 		<a href="#iteminfo"><span class="selector">상품정보</span></a> <a href="#revlist"><span class="selector">리뷰목록</span></a> <a href="#qalist"><span class="selector">상품문의</span></a>
 	</div>
-<div style='width:900px; height:500px; margin:0 auto; z-index: 1;'>
+<div style='width:900px; height:500px; margin:0 auto; z-index: 1; margin-top:70px; padding-bottom:50px; border-bottom:1px solid silver;'>
 	<div style="margin-top:50px; float:left; padding-left:100px;">	
 		 <div class="slideshow-container">	
 			<div class='mySlides fade' th:each="att , iStat:${drink.item.imgList}">
@@ -292,18 +294,18 @@ function buynow()
 		  </div>
 	</div>	
 	<div id="iteminfo" style="margin-top:50px; margin-bottom:50px;width:280px; float:right;">
-		<div th:text="${drink.item.itemcode}"></div>
-		<div th:text="${drink.item.name}"></div>
-		<div th:text="${drink.item.price}+'원'"></div>
-		<div th:text="${drink.item.brandname}"></div>
-		<div th:text="${drink.item.type}"></div>
-		<div th:text="${drink.item.alcohol}"></div>
-		<div th:text="${drink.item.producingarea}"></div>
-		<div th:text="${drink.item.detailcontent}"></div>
-		<div th:text="${drink.item.material}"></div>
+		<div th:text="'상품번호 : '+${drink.item.itemcode}"></div>
+		<div th:text="'상품명 : '+${drink.item.name}"></div>
+		<div th:text="'가격 : '+${drink.item.price}+'원'"></div>
+		<div th:text="'브랜드 : '+${drink.item.brandname}"></div>
+		<div th:text="'주종 : '+${drink.item.type}"></div>
+		<div th:text="'도수 : '+${drink.item.alcohol}"></div>
+		<div th:text="'원산지 : '+${drink.item.producingarea}"></div>
+		<div th:text="'정보 : '+${drink.item.detailcontent}"></div>
+		<div th:text="'원산지 : '+${drink.item.material}"></div>
 		<div>
 			<span th:if='${drink.item.quantity>10}' th:text="'남은재고 '+${drink.item.quantity}+'개'"></span><br>
-			<span th:if='${1<=drink.item.quantity} and ${drink.item.quantity<=10}' th:text="'매진임박 '+${drink.item.quantity}+'개'" style='color:red;'></span><br>
+			<span th:if='${1<=drink.item.quantity} and ${drink.item.quantity<=10}' th:text="'매진임박 남은수량 : '+${drink.item.quantity}+'개'" style='color:red;'></span><br>
 			<span th:if='${drink.item.quantity==0}' th:text="'매진'" style='color:gray;'></span><br>
 		</div>
 		<div>
@@ -312,7 +314,7 @@ function buynow()
 				<input type='hidden' id='price' name='price' th:value="${drink.item.price}">
 				<input type='hidden' name='name' th:value="${drink.item.name}">
 				<input type='hidden' name='vnum' th:value="${drink.item.vnum}">				
-				수량 : <input type='number' id='amount' name='amount' step='1' max='10' min='1' value='1' onchange='setprice();'><p>
+				수량 : <input type='number' id='amount' name='amount' step='1' th:max=${drink.item.quantity} min='1' value='1' onchange='setprice();'><p>
 				<p id='result'></p>
 				<button type='submit'>구매하기</button>
 				<button type='button' onclick='addcart()'>장바구니</button>
@@ -320,17 +322,32 @@ function buynow()
 		</div>
 	</div>
 </div>
+<div style="width:800px; margin:auto; text-align:center; margin-top:60px; padding-bottom:100px;border-bottom:1px solid silver;">
+	<h1> 제품 상세 </h1>
+	<div th:each="att:${drink.item.imgList}" style="margin-top:50px;">
+		<img style="width:500px; height:500px; border:1px solid silver" th:src="@{'/'+${drink.item.name}+'/'+${att.fname}}">
+	</div>
+</div>
+
 <p>
-<div style="border:3px double silver; width:700px; margin:auto; position:relative; top:120px; padding:10px;">
+<div style="width:120px; margin:auto; margin-top:50px;">
+	<h1> ReviewList </h1>
+</div>
+<div  id="revlist" style="border:3px double silver; width:700px; margin:auto; position:relative; top:50px; padding:10px;">
 	<div class="revlist" style=" width:678px; margin:auto; border:1px solid silver; padding:10px;" th:each="rev,revStat : ${drink.item.revList}">
-			닉네임 : <span th:text="${drink.nicklist.get(revStat.index)}"></span><br>
-			고객번호 : <span th:text=${rev.cnum}></span><br>
+			닉네임 : <span th:text="${drink.nicklist.get(revStat.index)}"></span>
 			리뷰날짜 : <span th:text=${rev.regDate}></span><br>
-			내용 : <span th:text="${rev.content}"></span><br>
+			내용 : <span th:text="${rev.content}"></span>
 			점수 : <span th:text="${rev.score}+' 점'"></span>
 	</div>
 </div>
-<div id="qalist" style="width:800px; height:80px; position:relative; top:300px;  text-align:left; margin:auto; ">
+
+
+<div style="width:800px; margin:auto;margin-top:150px; border-top:1px solid silver;">
+	<h1 style="text-align:center; margin-top:70px;">Q & A</h1>
+</div>
+
+<div id="qalist" style="width:700px;  position:relative; top:100px;  text-align:left; margin:auto; padding-bottom:50px;">
 	<div th:if="${session.cnum}" style="float:right">
 		<button type="button" onclick="addQuestion()">문의하기</button>
 		<dialog class='dialogs' id="dialog" >					
@@ -349,16 +366,16 @@ function buynow()
 		  </div>					  
 		</dialog>	
 	</div>
-	<div th:unless="${session.cnum}">
+	<div th:unless="${session.cnum}" style="text-align:right; font-size:18px; font-weight:bold;">
 		문의하기는 로그인이 필요한 기능입니다.
 	</div>
-	<div th:each="qa : ${drink.qalist}">
-		q칸 : [[${qa.question}]]
+	<div th:each="qa : ${drink.qalist}" style="border:1px solid silver; width:700px; margin:auto; margin-top:20px; padding:20px;">
+		문의내용 : [[${qa.question.content}]] 작성일 : [[${qa.question.regDate}]]<p>
 		<div th:if="${qa.answer}">
-			a칸 : [[${qa.answer}]]
+			판매자 : [[${qa.answer.content}]]  작성일 [[${qa.answer.regDate}]]
 		</div>
 		<div th:unless="${qa.answer}">
-			a칸 : 답변없음
+			해당 문의글의 답변이 없는 상태입니다.
 		</div>
 	</div>
 </div>

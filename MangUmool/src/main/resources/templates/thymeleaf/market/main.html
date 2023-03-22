@@ -43,10 +43,9 @@
 
 <div th:include="@{/fragments/findnavi.html}"></div>
 <div th:include="@{/fragments/searchnavi.html}"></div>
-<div th:if="${end!=0}" style="margin:auto; width:1200px; height:100%; padding-top:100px; text-align:center;">
-<div style='display:flex;'>
-	<div class='itemcomp' th:each="items : ${list}" style="width:200px; height:300px; padding-top:20px; ">	
-	<a th:href="'/drinks/detail/'+${items.drink.itemcode}" style=' height:370px; width:220px;text-decoration: none; color:black; '>
+<div th:if="${end!=0}" style="margin:auto; width:1200px; height:100%; padding-top:100px; text-align:center; display:flex; flex-wrap: wrap; ">
+	<div class='itemcomp' th:each="items : ${list}" style="width:245px; height:300px; padding-top:20px; border:5px double #E6E6E6; margin-bottom:20px;">	
+	<a th:href="'/drinks/detail/'+${items.drink.itemcode}" style=' height:370px; width:220px;text-decoration: none; color:black;'>
 		<ul style='list-style:none; margin:auto; height:280px; width:150px;padding:0;'>
 			<div style='text-align:left;'>[[${items.drink.brandname}]]</div><p>
 			<div>  
@@ -69,8 +68,9 @@
 			</div>
 		</ul>	
 	</a>
-	</div> 
 </div>
+</div>
+<div style="text-align:center; margin:50px;">
 <div th:if="${finditems==1}">
 	<span th:if="${end!=0}" style="font-size:32px; padding-left:20px;" th:each="page:${#numbers.sequence(1,end)}">
 		<a th:href="@{'/drinks/find'(keyword=${keyword},pg=${page})}">[[${page}]]</a>

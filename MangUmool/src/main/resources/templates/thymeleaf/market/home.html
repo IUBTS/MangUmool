@@ -3,16 +3,47 @@
 <head>
 <meta charset="utf-8">
 <title>HOME</title>
+<link rel="stylesheet" href="/css/slide.css" />
 </head>
 
 <body>
-
+<style>
+#slidecontent {padding-top:50px; }
+.slide_item img{width:900px; border-radius:3em;}
+</style>
 
 
 <div th:include="@{/fragments/findnavi.html}"></div>
 <div th:include="@{/fragments/searchnavi.html}"></div>
-<div style='margin:auto; width:1200px'>
-<iframe src="http://www.daum.net" style="width:100%;height:400px;">이 브라우저는 해당 내용을 지원하지 않습니다.</iframe>  
+<div style='margin:auto; width:1200px; background-color: #F7F5EE;'>
+
+      <div id="slidecontent" class="slide slide_wrap">
+	      <div class="slide_item item1"><img src="/img/mainbanner.jpg"></div>
+	      <div class="slide_item item2"><img src="/img/mainbanner2.jpg"></div>
+	      <div class="slide_item item3"><img src="/img/mainbanner3.jpg"></div>
+	      <div class="slide_prev_button slide_button">◀</div>
+	      <div class="slide_next_button slide_button">▶</div>
+	      <ul class="slide_pagination"></ul>
+	    </div>
+    <script src="/js/slide.js"></script>
+    <div style="font-size:29px; margin-top:80px; text-align:center; font-weight:bold;"> HOT BRAND </div>
+	<div style="width:1200px;  display:flex;  margin:auto; padding-bottom:50px; display:flex; flex-wrap: wrap;">
+		<div style="width:350px; height:300px; border:1px silver solid; margin-left:35px; margin-top:50px;">
+			<a href="/drinks/find?keyword=배혜정도가"><img src="/img/baehyemain.png"></a>
+		</div>
+		<div style="width:350px; height:300px; border:1px silver solid;margin-left:40px;margin-top:50px;">
+			<a href="/drinks/find?keyword=술샘"><img src="/img/soolsam.png"></a>
+		</div>
+		<div style="width:350px; height:300px; border:1px silver solid;margin-left:40px;margin-top:50px;">
+			<a href="/drinks/find?keyword=배상면주"><img src="/img/baesangmain.png"></a>
+		</div>
+		<div style="width:350px; height:300px; border:1px silver solid;margin-left:40px;margin-top:50px;">
+			<a href="/drinks/find?keyword=영덕주조"><img src="/img/youngdeokmain.png"></a>
+		</div>
+		<div style="width:350px; height:300px; border:1px silver solid;margin-left:40px;margin-top:50px;">
+			<a href="/drinks/find?keyword=댄싱사이더"><img src="/img/dancingmain.png"></a>
+		</div>
+	</div>
 </div>
 </body>
 </html>

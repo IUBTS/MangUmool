@@ -60,7 +60,7 @@ public class MarketController {
 	@GetMapping("/find")
 	public String find(Model m,@RequestParam("keyword")String keyword, @RequestParam(required =false, defaultValue="1") int pg)
 	{	
-		List<Map<String,Object>> list = svc.getMain(keyword,pg,3);
+		List<Map<String,Object>> list = svc.getMain(keyword,pg,8);
 		m.addAttribute("finditems", 1);
 		m.addAttribute("list",list);
 		if(list.size()!=0)
@@ -76,7 +76,7 @@ public class MarketController {
 	@GetMapping("/findAlcohol")
 	public String findByAlcoho(Model m,@RequestParam("keyword1")int keyword1 ,@RequestParam("keyword2") int keyword2, @RequestParam(required =false, defaultValue="1") int pg)
 	{	
-		List<Map<String,Object>> list = svc.getByAlcohol(keyword1,keyword2,pg,3);
+		List<Map<String,Object>> list = svc.getByAlcohol(keyword1,keyword2,pg,8);
 		m.addAttribute("finditems", 2);
 		m.addAttribute("list",list);
 		if(list.size()!=0)
