@@ -60,6 +60,36 @@
 			
 	</select>
 	
+	<select id="getSimilarItemList"
+			parameterType="list"
+			resultType="map">
+				
+		SELECT i.alcohol,i.type,i.itemcode,i.price,i.quantity,i.brandname,i.name,a.fname,a.ianum,ROUND(AVG(r.score),2) AS avg, COUNT(r.score) AS cnt
+        FROM TRADI_ITEMS i
+		LEFT OUTER JOIN TRADI_I_ATTACH a
+		ON i.itemcode=a.itemcode
+		LEFT OUTER JOIN TRADI_REVIEW r
+		ON i.itemcode=r.itemcode
+		WHERE POST = 1 
+		AND fname LIKE 'thumnail%' 
+		AND 
+		i.itemcode IN
+		  <foreach item="item" index="index" collection="list" open="(" separator="," close=")">
+		    #{item}
+		  </foreach>
+		 GROUP BY i.alcohol,i.type,i.itemcode,i.price,i.quantity,i.brandname,i.name,a.fname,a.ianum
+		 ORDER BY CASE		 
+		  <foreach item="item" index="index" collection="list" separator=" ">
+		       WHEN i.ITEMCODE = #{item} THEN #{index}
+		    </foreach>
+	     END ASC
+	     	    
+	</select>	
+	
+	
+	
+	
+	
 	<select id="getQAList"
 			parameterType="Integer"
 			resultType='map'>

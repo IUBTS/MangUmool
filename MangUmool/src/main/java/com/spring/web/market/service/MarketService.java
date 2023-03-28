@@ -1,6 +1,12 @@
 package com.spring.web.market.service;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -40,6 +46,12 @@ public class MarketService {
 
 	@Autowired
 	private MarketMapper mapper;
+	
+	private static final String URL = "https://www.google.com";
+    private static final String GET = "GET";
+    private static final String USER_AGENT = "Mozilla/5.0";
+    private static final String DATA = "test data";	
+    private static final String POST = "POST";	
 	
 	//전체상품리스트
 	public List<Map<String,Object>> getMain(String keyword,int pg, int row)
@@ -182,11 +194,7 @@ public class MarketService {
 		return list;		
 	}
 	
-	
-	
-	
-	
-	
+	//아이템 상세보기	
 	public Map<String,Object> getDetail(int itemcode)
 	{		
 		List<Map<String,Object>> list = mapper.getDetail(itemcode);
@@ -276,12 +284,9 @@ public class MarketService {
 			if(!(item.getImgList().contains(att))) item.getImgList().add(att);
 			
 		}
-		
-		
 		List<Map<String,Object>> qlist = mapper.getQAList(itemcode);
 		List<Map<String,Object>> qalist = new ArrayList<>();
 		
-		log.info("qlist"+qlist.toString())	;
 		if(qlist.size()>0)
 		{
 			for(int i=0;i<qlist.size();i++)
@@ -327,9 +332,122 @@ public class MarketService {
 			}
 		}
 		map.put("qalist", qalist);
-		map.put("item", item);		
+		map.put("item", item);
+		
+		List<Map<String,Object>> similarItemList = similarItems(itemcode);
+		map.put("similarItemList", similarItemList);
+		
 		return map;
 	}
+	
+	//파이썬 서버 접속
+	public List<Integer> pythonConnect(int itemcode) throws IOException {
+		
+	    URL url = new URL("http://localhost:7717/similar/"+itemcode);
+	    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	
+	    connection.setRequestMethod(POST);     // POST 방식 요청
+	    connection.setRequestProperty("User-Agent", USER_AGENT);
+	    connection.setDoOutput(true);
+	
+	    DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+	    outputStream.writeBytes(DATA);
+	    outputStream.flush();
+	    outputStream.close();
+	
+	    int responseCode = connection.getResponseCode();
+	
+	    BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+	    StringBuffer stringBuffer = new StringBuffer();
+	    String inputLine;
+	
+	    while ((inputLine = bufferedReader.readLine()) != null)  {
+	        stringBuffer.append(inputLine);
+	    }
+	    bufferedReader.close();
+	
+	    String response = stringBuffer.toString();
+	    String[] strArr = response.replaceAll("\\[|\\]|\\s", "").split(",");
+	    List<Integer> list = new ArrayList<>();
+	    for(int i=0; i<strArr.length ; i++ )
+	    {	    	
+	    	int res1 = Integer.valueOf(strArr[i]);
+	    	list.add(res1);
+	    }	        
+	    return list;
+	}
+	
+	
+	//비슷한 상품 추천
+	public List<Map<String,Object>> similarItems(int itemcode)
+	{		
+		try 
+		{			
+			List<Integer> similarItemList = pythonConnect(itemcode);
+			List<Map<String,Object>> slist = mapper.getSimilarItemList(similarItemList);
+			List<Map<String,Object>> list = new ArrayList<>();
+			
+			for(int i =0;i<slist.size();i++)
+			{
+				Map<String,Object> map = new HashMap<>();				
+
+				Map<String,Object> imap = slist.get(i);
+				Items item = new Items();
+										
+				BigDecimal alcohol = (java.math.BigDecimal)imap.get("ALCOHOL");
+				BigDecimal price = (java.math.BigDecimal)imap.get("PRICE");
+				BigDecimal quantity = (java.math.BigDecimal)imap.get("QUANTITY");
+				
+				item.setAlcohol(alcohol.doubleValue());
+				item.setItemcode(itemcode);
+				item.setPrice(price.intValue());
+				item.setQuantity(quantity.intValue());
+				item.setBrandname((String)imap.get("BRANDNAME"));
+				item.setName((String)imap.get("NAME"));		
+				
+				boolean found = false;
+				String attname = (String)imap.get("FNAME");	
+							
+				if(attname==null)
+				{					
+					map.put("drink", item);
+					list.add(map);
+					if(!found) continue;
+				}					
+				BigDecimal ianum = (java.math.BigDecimal)imap.get("IANUM");
+				
+				I_Attach linkImg = new I_Attach();
+				linkImg.setFname(attname);
+				linkImg.setIanum(ianum.intValue());
+				
+				map.put("drink", item);
+				map.put("att", linkImg);
+				
+				Optional<Object> optional = Optional.ofNullable(imap.get("AVG"));
+				if(optional.isPresent())
+				{						
+					BigDecimal avg = (java.math.BigDecimal)imap.get("AVG");
+					BigDecimal cnt = (java.math.BigDecimal)imap.get("CNT");
+					map.put("cnt", cnt.intValue());
+					map.put("avg", avg.doubleValue());
+				}
+				else 
+				{
+					map.put("cnt", 0);
+					map.put("avg", 0.0);
+				}
+				list.add(map);				
+			}			
+			return list;			
+		} 
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}					
+		return null;
+	}	
+	
+	
 	
 	public Map<String,Object> regisQuestion(Question question)
 	{
@@ -347,9 +465,7 @@ public class MarketService {
 			map.put("msg", "문의사항 등록 실패");
 		}		
 		return map;
-	}
-	
-	
+	}		
 	
 	
 	public Map<String,Object> addCart(Cart cart)
@@ -403,8 +519,7 @@ public class MarketService {
 			map.put("fname", (String)m.get("FNAME"));
 			
 			list.add(map);
-		}
-	
+		}	
 		return list;
 	}
 	
@@ -457,9 +572,7 @@ public class MarketService {
 				map.put("itemcode", itemcode);
 				map.put("amount", amount);
 				map.put("name", name);
-				
-				log.info("itemcode : " + name);
-				
+
 				list.add(map);
 			}
 		} 

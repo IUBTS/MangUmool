@@ -38,5 +38,7 @@ public interface MarketMapper {
 	public int addOrderList(Order order);
 	
 	public int addOrderItem(List<OrderItem> list);
+	
+	public List<Map<String,Object>> getSimilarItemList(List<Integer> list);
 
 }

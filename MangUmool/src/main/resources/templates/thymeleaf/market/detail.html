@@ -322,6 +322,12 @@ function buynow()
 		</div>
 	</div>
 </div>
+
+<div style="width:800px; margin:auto; text-align:center; margin-top:60px; padding-bottom:100px;border-bottom:1px solid silver;">
+	<div th:each="simil:${drink.similarItemList}">
+		[[${simil}]]
+	</div>
+</div>
 <div style="width:800px; margin:auto; text-align:center; margin-top:60px; padding-bottom:100px;border-bottom:1px solid silver;">
 	<h1> 제품 상세 </h1>
 	<div th:each="att:${drink.item.imgList}" style="margin-top:50px;">
