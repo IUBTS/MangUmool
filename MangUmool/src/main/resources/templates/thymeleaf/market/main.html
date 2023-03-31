@@ -26,7 +26,7 @@
   overflow: hidden;
   pointer-events: none;
 }
-#starscore{font-family: 'YanoljaYacheR'; font-size:25px;}
+.starscore{font-family: 'YanoljaYacheR'; font-size:25px;}
 
 .itemcomp{ margin:auto; }
 
@@ -37,13 +37,33 @@
 	transition: box-shadow 0.5s linear;
 }
 
+#recommendItems:hover{
+	
+	box-shadow: 
+	  0 0 1px 1px #fff, 
+      0 0 4px 4px red,
+      0 0 10px 10px pink, 
+      0 0 13px 13px yellow; 
+
+	font-weight: bold;
+	transition: box-shadow 0.5s linear;
+
+}
+
+
+.pagination a{
+	font-size:22px;
+	color:gray;
+
+}
+
 </style>
 
 <body>
 
 <div th:include="@{/fragments/findnavi.html}"></div>
 <div th:include="@{/fragments/searchnavi.html}"></div>
-<div th:if="${end!=0}" style="margin:auto; width:1200px; height:100%; padding-top:100px; text-align:center; display:flex; flex-wrap: wrap; ">
+<div th:if="${end!=0}" style="margin:auto; width:1200px; height:100%; padding-top:100px; text-align:center; display:flex; flex-wrap: wrap; padding-bottom:50px; border-bottom:1px solid silver;">
 	<div class='itemcomp' th:each="items : ${list}" style="width:245px; height:300px; padding-top:20px; border:5px double #E6E6E6; margin-bottom:20px;">	
 	<a th:href="'/drinks/detail/'+${items.drink.itemcode}" style=' height:370px; width:220px;text-decoration: none; color:black;'>
 		<ul style='list-style:none; margin:auto; height:280px; width:150px;padding:0;'>
@@ -53,16 +73,15 @@
 				<div>
 					<li style='font-weight: bold;'>[[${items.drink.name}]]</li>
 					<li>[[${items.drink.alcohol}]]도</li>
-					<li>[[${items.drink.price}]]원</li>
-					<li><span th:if="${1<=items.drink.quantity} and ${items.drink.quantity<10}" th:text="'매진 임박 '+${items.drink.quantity}+'개 남음'" style='color:red'></span>
-						<span th:if="${items.drink.quantity==0}" th:text="'매진'" style='color:gray;'>					
-					</li>
-					
-					<li id='starscore'>						
+					<li>[[${items.drink.price}]]원</li>					
+					<li class='starscore'>						
 						<span class="star">★★★★★
 						<span th:style="'width:'+${(items.avg)*20}+'%;'">★★★★★</span>
 						</span>
-						<span th:text="'('+${items.cnt}+')'"></span>		
+						<span th:text="'('+${items.cnt}+')'" style="font-size:15px; color:gray;"></span>		
+					</li>
+					<li><span th:if="${1<=items.drink.quantity} and ${items.drink.quantity<10}" th:text="'매진 임박 '+${items.drink.quantity}+'개 남음'" style='color:red'></span>
+						<span th:if="${items.drink.quantity==0}" th:text="'매진'" style='color:gray;'>					
 					</li>
 				</div>
 			</div>
@@ -70,23 +89,84 @@
 	</a>
 </div>
 </div>
-<div style="text-align:center; margin:50px;">
-<div th:if="${finditems==1}">
-	<span th:if="${end!=0}" style="font-size:32px; padding-left:20px;" th:each="page:${#numbers.sequence(1,end)}">
-		<a th:href="@{'/drinks/find'(keyword=${keyword},pg=${page})}">[[${page}]]</a>
-	</span>
-</div>
-<div th:if="${finditems==2}">
-	<span th:if="${end!=0}" style="font-size:32px; padding-left:20px;" th:each="page:${#numbers.sequence(1,end)}">
-		<a th:href="@{'/drinks/findAlcohol'(keyword1=${keyword1},keyword2=${keyword2},pg=${page})}">[[${page}]]</a>
-	</span>
-</div>
 
+<div style="text-align:center; margin:50px;">
+	<div th:if="${finditems==1}">
+		<div class="pagination">
+		  <a th:href="@{'/drinks/find'(keyword=${keyword},pg=1)}">
+		    <span aria-hidden="true">&laquo;</span>
+		  </a>　
+		  <a th:href="@{'/drinks/find'(keyword=${keyword},pg=${pg-1})}" >
+		    <span aria-hidden="true">&lt;</span>
+		  </a>　
+		  <span th:each="pageLink : ${#numbers.sequence(1, end)}">
+		    <a th:if="${pageLink==pg}" style="color:red; padding-left:10px; padding-right:10px;" th:href="@{'/drinks/find'(keyword=${keyword},pg=${pageLink})}" th:class="${pageLink == pg} ? 'active' : ''" th:text="${pageLink}"></a>
+		    <a th:unless="${pageLink==pg}" style="padding-left:10px;  padding-right:10px;" th:href="@{'/drinks/find'(keyword=${keyword},pg=${pageLink})}" th:class="${pageLink == pg} ? 'active' : ''" th:text="${pageLink}"></a>
+		  </span>　
+		  <a th:href="@{'/drinks/find'(keyword=${keyword},pg=${pg+1})}" th:if="${pg < end}">
+		    <span aria-hidden="true">&gt;</span>
+		  </a>　
+		  <a th:href="@{'/drinks/find'(keyword=${keyword},pg=${end})}" th:if="${pg < end}">
+		    <span aria-hidden="true">&raquo;</span>
+		  </a>　
+		</div>
+	</div>
+	<div th:if="${finditems==2}">
+		<div class="pagination">
+		  <a th:href="@{'/drinks/findAlcohol'(keyword1=${keyword1},keyword2=${keyword2},pg=1)}">
+		    <span aria-hidden="true">&laquo;</span>
+		  </a>
+		  <a th:href="@{'/drinks/findAlcohol'(keyword1=${keyword1},keyword2=${keyword2},${pg-1})}">
+		    <span aria-hidden="true">&lt;</span>
+		  </a>
+		  <span th:each="pageLink : ${#numbers.sequence(1, end)}">
+		    <a th:if="${pageLink==pg}" style="color:red; padding-left:10px; padding-right:10px;" th:href="@{'/drinks/findAlcohol'(keyword1=${keyword1},keyword2=${keyword2},pg=${pageLink})}" th:class="${pageLink == pg} ? 'active' : ''" th:text="${pageLink}"></a>
+		  	<a th:unless="${pageLink==pg}" style="padding-left:10px;  padding-right:10px;" th:href="@{'/drinks/findAlcohol'(keyword1=${keyword1},keyword2=${keyword2},pg=${pageLink})}" th:class="${pageLink == pg} ? 'active' : ''" th:text="${pageLink}"></a>
+		  </span>
+		  <a th:href="@{'/drinks/findAlcohol'(keyword1=${keyword1},keyword2=${keyword2},pg=${pg+1})}" th:if="${pg < end}">
+		    <span aria-hidden="true">&gt;</span>
+		  </a>
+		  <a th:href="@{'/drinks/findAlcohol'(keyword1=${keyword1},keyword2=${keyword2},pg=${end})}" th:if="${pg < end}">
+		    <span aria-hidden="true">&raquo;</span>
+		  </a>
+		</div>		
+	</div>
 </div>
 
 
 <div th:unless="${end!=0}" style="margin:auto; width:50%; height:100%; padding-top:100px; text-align:center;">
  찾으시는 제품이 없습니다. 다른 키워드로 검색해보세요.
 </div>
+
+
+<div style="text-align:center; color:gray; ">
+	<h2>[[${session.nickname}]]님 이런 상품은 어때요?</h2>
+</div>
+
+
+<div th:if="${session.nickname!=null}" style="margin:auto; width:1200px; height:100%; padding-top:50px; text-align:center; display:flex; flex-wrap: wrap; ">
+	<div id='recommendItems' class='itemcomp' th:each="items : ${recommendList}" style="width:195px; height:270px; padding-top:20px; border: 2px solid transparent;  border-image: linear-gradient(to right, red 0%, orange 100%); border-image-slice: 1; margin-bottom:20px;">	
+		<a th:href="'/drinks/detail/'+${items.drink.itemcode}" style=' height:340px; width:170px;text-decoration: none; color:black;'>
+			<ul style='list-style:none; margin:auto; height:280px; width:150px;padding:0;'>
+				<div style='text-align:left;'>[[${items.drink.brandname}]]</div><p>
+				<div>  
+					<img style="width:150px; height:150px;" th:src="@{'/'+${items.drink.name}+'/'+${items.att.fname}}">
+					<div>
+						<li style='font-weight: bold;'>[[${items.drink.name}]]</li>
+						<li>[[${items.drink.alcohol}]]도</li>
+						<li>[[${items.drink.price}]]원</li>					
+						<li class='starscore'>						
+							<span class="star">★★★★★
+							<span th:style="'width:'+${(items.avg)*20}+'%;'">★★★★★</span>
+							</span>
+							<span th:text="'('+${items.cnt}+')'" style="font-size:15px; color:gray;"></span>		
+						</li>
+					</div>
+				</div>
+			</ul>	
+		</a>
+	</div>
+</div>
+
 </body>
 </html>

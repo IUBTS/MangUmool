@@ -27,6 +27,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.spring.web.customer.vo.Customer;
 import com.spring.web.customer.vo.Review;
+import com.spring.web.market.controller.MarketController;
 import com.spring.web.market.mapper.MarketMapper;
 import com.spring.web.market.vo.Answer;
 import com.spring.web.market.vo.Cart;
@@ -190,9 +191,24 @@ public class MarketService {
 				map.put("avg", 0.0);
 			}
 			list.add(map);				
-		}			
+		}	
 		return list;		
 	}
+
+	
+	public Map<String,Object> getPageLinkList(int page,int end)
+	{
+		Map<String,Object> map = new HashMap<>();
+
+		
+		return map;
+	}
+	
+	
+	
+	
+	
+	
 	
 	//아이템 상세보기	
 	public Map<String,Object> getDetail(int itemcode)
@@ -332,20 +348,45 @@ public class MarketService {
 			}
 		}
 		map.put("qalist", qalist);
-		map.put("item", item);
-		
-		List<Map<String,Object>> similarItemList = similarItems(itemcode);
-		map.put("similarItemList", similarItemList);
+		map.put("item", item);		
+		try 
+		{
+			List<Map<String, Object>> similarItemList = pythonConnectGetSimilarItems(itemcode);
+			map.put("similarItemList", similarItemList);
+		}
+		catch (IOException e) 
+		{
+			e.printStackTrace();
+		}		
 		
 		return map;
 	}
 	
-	//파이썬 서버 접속
-	public List<Integer> pythonConnect(int itemcode) throws IOException {
+	//파이썬 서버 접속_유사상품추천
+	public List<Map<String,Object>> pythonConnectGetSimilarItems(int itemcode) throws IOException {
 		
-	    URL url = new URL("http://localhost:7717/similar/"+itemcode);
-	    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+	    URL url = new URL("http://localhost:7717/similar/"+itemcode);	   
+	    List<Integer> recommendListByPython = getRecommendList(url);
+	    List<Map<String,Object>> recommendListFromDB = getRecommendListFromDB(recommendListByPython);
+	    
+	    return recommendListFromDB;
+	}
 	
+	//파이썬 서버 접속_개인맞춤추천시스템
+	public List<Map<String,Object>> pythonConnectGetIndividualRecommendItems(int cnum) throws IOException {
+		
+	    URL url = new URL("http://localhost:7717/indiv_recommend/"+cnum);	    
+	    List<Integer> recommendListByPython = getRecommendList(url);
+	    List<Map<String,Object>> recommendListFromDB = getRecommendListFromDB(recommendListByPython);
+	    
+	    return recommendListFromDB;
+	}
+	
+	//파이썬 서버접속_리스트가져오기
+	public List<Integer> getRecommendList(URL url)  throws IOException 
+	{
+		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+		
 	    connection.setRequestMethod(POST);     // POST 방식 요청
 	    connection.setRequestProperty("User-Agent", USER_AGENT);
 	    connection.setDoOutput(true);
@@ -375,16 +416,14 @@ public class MarketService {
 	    	list.add(res1);
 	    }	        
 	    return list;
+		
 	}
 	
-	
-	//비슷한 상품 추천
-	public List<Map<String,Object>> similarItems(int itemcode)
+	//추천리스트 DB에서 순서대로 가져와서 List에 정렬
+	public List<Map<String,Object>> getRecommendListFromDB(List<Integer> recommendList)
 	{		
-		try 
-		{			
-			List<Integer> similarItemList = pythonConnect(itemcode);
-			List<Map<String,Object>> slist = mapper.getSimilarItemList(similarItemList);
+		
+			List<Map<String,Object>> slist = mapper.getRecommendList(recommendList);
 			List<Map<String,Object>> list = new ArrayList<>();
 			
 			for(int i =0;i<slist.size();i++)
@@ -399,7 +438,7 @@ public class MarketService {
 				BigDecimal quantity = (java.math.BigDecimal)imap.get("QUANTITY");
 				
 				item.setAlcohol(alcohol.doubleValue());
-				item.setItemcode(itemcode);
+				item.setItemcode(recommendList.get(i));
 				item.setPrice(price.intValue());
 				item.setQuantity(quantity.intValue());
 				item.setBrandname((String)imap.get("BRANDNAME"));
@@ -438,14 +477,13 @@ public class MarketService {
 				}
 				list.add(map);				
 			}			
-			return list;			
-		} 
-		catch (IOException e) 
-		{
-			e.printStackTrace();
-		}					
-		return null;
+			return list;					
 	}	
+	
+	
+
+	
+	
 	
 	
 	
@@ -532,7 +570,6 @@ public class MarketService {
 			Cart cart = new Cart();
 			cart.setCnum(cnum);
 			cart.setItemcode(Integer.parseInt(icl[i]));
-			log.info("itemcode = {}",Integer.parseInt(icl[i]));
 			
 			list.add(cart);
 		}

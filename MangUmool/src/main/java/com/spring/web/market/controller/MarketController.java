@@ -60,46 +60,66 @@ public class MarketController {
 	@GetMapping("/find")
 	public String find(Model m,@RequestParam("keyword")String keyword, @RequestParam(required =false, defaultValue="1") int pg)
 	{	
-		List<Map<String,Object>> list = svc.getMain(keyword,pg,8);
+		List<Map<String,Object>> list = svc.getMain(keyword,pg,4);
 		m.addAttribute("finditems", 1);
 		m.addAttribute("list",list);
+		m.addAttribute("keyword", keyword);
 		if(list.size()!=0)
 		{
 			m.addAttribute("end",list.get(0).get("end"));
+			m.addAttribute("pg",pg);
 		}
 		else { m.addAttribute("end",0); }
-		m.addAttribute("keyword", keyword);
-		
+		if(session.getAttribute("cnum")!=null)
+		{			
+			try 
+			{
+				List<Map<String, Object>> recommendList = svc.pythonConnectGetIndividualRecommendItems((int)session.getAttribute("cnum"));
+				m.addAttribute("recommendList", recommendList);
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+		}
 		return "thymeleaf/market/main";
 	}
 	
 	@GetMapping("/findAlcohol")
 	public String findByAlcoho(Model m,@RequestParam("keyword1")int keyword1 ,@RequestParam("keyword2") int keyword2, @RequestParam(required =false, defaultValue="1") int pg)
 	{	
-		List<Map<String,Object>> list = svc.getByAlcohol(keyword1,keyword2,pg,8);
+		List<Map<String,Object>> list = svc.getByAlcohol(keyword1,keyword2,pg,4);
 		m.addAttribute("finditems", 2);
 		m.addAttribute("list",list);
+		m.addAttribute("keyword1", keyword1);
+		m.addAttribute("keyword2", keyword2);
 		if(list.size()!=0)
 		{
 			m.addAttribute("end",list.get(0).get("end"));
+			m.addAttribute("pg",pg);
 		}
 		else { m.addAttribute("end",0); }
-		m.addAttribute("keyword1", keyword1);
-		m.addAttribute("keyword2", keyword2);
-		
+		if(session.getAttribute("cnum")!=null)
+		{			
+			try 
+			{
+				List<Map<String, Object>> recommendList = svc.pythonConnectGetIndividualRecommendItems((int)session.getAttribute("cnum"));
+				m.addAttribute("recommendList", recommendList);
+			} 
+			catch (IOException e) 
+			{
+				e.printStackTrace();
+			}
+		}
 		return "thymeleaf/market/main";
 	}
-	
-
 	
 
 	@GetMapping("/detail/{itemcode}")
 	public String detail(Model m,@PathVariable int itemcode)
 	{
 		Map<String,Object> map = svc.getDetail(itemcode);		
-
 		m.addAttribute("drink", map);
-
 		return "thymeleaf/market/detail";
 	}
 	
@@ -109,8 +129,7 @@ public class MarketController {
 	{
 		question.setCnum((int)session.getAttribute("cnum"));
 		return 	svc.regisQuestion(question);
-	}	
-	
+	}		
 
 
 	@ResponseBody

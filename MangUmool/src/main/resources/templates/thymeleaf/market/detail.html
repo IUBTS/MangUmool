@@ -267,6 +267,29 @@ function buynow()
 	background-color: white;
 }
 
+@font-face {
+    font-family: 'YanoljaYacheR';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/YanoljaYacheR.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+.star {
+  position: relative;
+  font-size: 1em;
+  color: #ddd;
+}
+.star span {
+
+  position: absolute; 
+  left: 0;
+  color:gold;
+  overflow: hidden;
+  pointer-events: none;
+}
+.starscore{font-family: 'YanoljaYacheR'; font-size:25px;}
+
+
 </style>
 </head>
 <body>
@@ -322,12 +345,33 @@ function buynow()
 		</div>
 	</div>
 </div>
+<div style="text-align:center; font-size:20px; color: gray; margin-top:50px;">
+	<span>'[[${drink.item.name}]]'상품과 유사한 상품목록</span>
+</div>
 
-<div style="width:800px; margin:auto; text-align:center; margin-top:60px; padding-bottom:100px;border-bottom:1px solid silver;">
-	<div th:each="simil:${drink.similarItemList}">
-		[[${simil}]]
+<div style="margin:auto; width:900px; padding-top:30px; padding-bottom:50px;height:100%; text-align:center; display:flex; flex-wrap: wrap; border-bottom: 1px solid silver;">
+	<div id='recommendItems' class='itemcomp' th:each="items : ${drink.similarItemList}" style=" width:135px; height:200px; padding-top:20px; margin-right:16px; margin-left:24px;border: 2px solid transparent;  border-image: linear-gradient(to right, #C7D6D9 0%, #0595A8 100%); border-image-slice: 1; margin-bottom:20px;">	
+		<a th:href="'/drinks/detail/'+${items.drink.itemcode}" style='height:240px; width:130px;text-decoration: none; color:black;'>
+			<ul style='list-style:none; margin:auto; height:100%; width:124px;padding:0;'>
+				<div>  
+					<img style="width:100px; height:100px;" th:src="@{'/'+${items.drink.name}+'/'+${items.att.fname}}">
+					<div>
+						<li style='font-weight: bold;'>[[${items.drink.name}]]</li>
+						<li>[[${items.drink.alcohol}]]도</li>
+						<li>[[${items.drink.price}]]원</li>					
+						<li class='starscore'>						
+							<span class="star">★★★★★
+							<span th:style="'width:'+${(items.avg)*20}+'%;'">★★★★★</span>
+							</span>
+							<span th:text="'('+${items.cnt}+')'" style="font-size:15px; color:gray;"></span>		
+						</li>
+					</div>
+				</div>
+			</ul>	
+		</a>
 	</div>
 </div>
+
 <div style="width:800px; margin:auto; text-align:center; margin-top:60px; padding-bottom:100px;border-bottom:1px solid silver;">
 	<h1> 제품 상세 </h1>
 	<div th:each="att:${drink.item.imgList}" style="margin-top:50px;">
@@ -339,12 +383,15 @@ function buynow()
 <div style="width:120px; margin:auto; margin-top:50px;">
 	<h1> ReviewList </h1>
 </div>
-<div  id="revlist" style="border:3px double silver; width:700px; margin:auto; position:relative; top:50px; padding:10px;">
+<div id="revlist" style="border:3px double silver; width:700px; margin:auto; position:relative; top:50px; padding:10px;">
 	<div class="revlist" style=" width:678px; margin:auto; border:1px solid silver; padding:10px;" th:each="rev,revStat : ${drink.item.revList}">
 			닉네임 : <span th:text="${drink.nicklist.get(revStat.index)}"></span>
 			리뷰날짜 : <span th:text=${rev.regDate}></span><br>
 			내용 : <span th:text="${rev.content}"></span>
 			점수 : <span th:text="${rev.score}+' 점'"></span>
+	</div>
+	<div th:if="${#lists.isEmpty(drink.item.revList)}" style="text-align:center;">
+		아직 상품 리뷰가 없습니다.
 	</div>
 </div>
 
@@ -353,29 +400,29 @@ function buynow()
 	<h1 style="text-align:center; margin-top:70px;">Q & A</h1>
 </div>
 
-<div id="qalist" style="width:700px;  position:relative; top:100px;  text-align:left; margin:auto; padding-bottom:50px;">
+<div id="qalist" style="width:700px;  position:relative; top:50px;  text-align:left; margin:auto; padding-bottom:50px;">
 	<div style="width:700px; height:50px;">
-	<div th:if="${session.cnum}" style="float:right;">
-		<button type="button" onclick="addQuestion()">문의하기</button>
-		<dialog class='dialogs' id="dialog" >					
-		  <form class='QuestionForm' id="questionform">					  
-			<input type='hidden' id='itemcode' name='itemcode' th:value="${drink.item.itemcode}">
-    		상품명 : <span th:text="${drink.item.name}"></span><p>
-    	    <textarea id='content' name='content' style="width:400px; height:250px;" placeholder="문의사항을 작성해주세요."></textarea>
-		  </form>  
-		  <div>
-		    <button class="close" id="close" onclick="closemodal()">
-		      닫기
-		    </button>
-		    <button type="button" onclick="regQuestion()">
-		      문의내역 등록
-		    </button>
-		  </div>					  
-		</dialog>	
-	</div>
-	<div th:unless="${session.cnum}" style="text-align:right; font-size:18px; font-weight:bold; margin-bottom:50px;">
-		문의하기는 로그인이 필요한 기능입니다.
-	</div>
+		<div th:if="${session.cnum}" style="float:right;">
+			<button type="button" onclick="addQuestion()">문의하기</button>
+			<dialog class='dialogs' id="dialog" >					
+			  <form class='QuestionForm' id="questionform">					  
+				<input type='hidden' id='itemcode' name='itemcode' th:value="${drink.item.itemcode}">
+	    		상품명 : <span th:text="${drink.item.name}"></span><p>
+	    	    <textarea id='content' name='content' style="width:400px; height:250px;" placeholder="문의사항을 작성해주세요."></textarea>
+			  </form>  
+			  <div>
+			    <button class="close" id="close" onclick="closemodal()">
+			      닫기
+			    </button>
+			    <button type="button" onclick="regQuestion()">
+			      문의내역 등록
+			    </button>
+			  </div>					  
+			</dialog>	
+		</div>
+		<div th:unless="${session.cnum}" style="text-align:right; font-size:18px; font-weight:bold; margin-bottom:50px;">
+			문의하기는 로그인이 필요한 기능입니다.
+		</div>
 	</div>
 	<div th:each="qa : ${drink.qalist}" style="border:1px solid silver; width:700px; margin:auto; margin-top:10px; padding:20px;">
 		문의내용 : [[${qa.question.content}]] 작성일 : [[${qa.question.regDate}]]<p>
@@ -385,6 +432,9 @@ function buynow()
 		<div th:unless="${qa.answer}">
 			해당 문의글의 답변이 없는 상태입니다.
 		</div>
+	</div>
+	<div th:if="${#lists.isEmpty(drink.qalist)}" style="text-align:center;">
+		아직 해당 상품의 Q&A가 없습니다.
 	</div>
 </div>
 

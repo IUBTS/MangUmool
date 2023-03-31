@@ -60,7 +60,7 @@
 			
 	</select>
 	
-	<select id="getSimilarItemList"
+	<select id="getRecommendList"
 			parameterType="list"
 			resultType="map">
 				
