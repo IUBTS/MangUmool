@@ -196,20 +196,6 @@ public class MarketService {
 	}
 
 	
-	public Map<String,Object> getPageLinkList(int page,int end)
-	{
-		Map<String,Object> map = new HashMap<>();
-
-		
-		return map;
-	}
-	
-	
-	
-	
-	
-	
-	
 	//아이템 상세보기	
 	public Map<String,Object> getDetail(int itemcode)
 	{		

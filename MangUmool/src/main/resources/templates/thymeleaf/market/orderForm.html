@@ -130,10 +130,10 @@
 		<p style="height:30px;">
 		
 		<div style='margin-top:25px; margin-bottom:15px; border-bottom:0.2px solid gray; width:80%'>받는사람 정보</div>
-			<label>이 름</label>　　　　<input type='text' name='toname' id='toname' th:value="${cus.cname}"><br>
-			<label>휴대폰 번호</label>　 <input type='text' name='tophone' id='tophone' th:value="${cus.phone}"><br>
-			<label>주 소</label>　　　<input type='text' name='toaddress' id='toaddress' th:value="${cus.address}" style="width:500px;"><br>
-			<label>배송요청사항</label>　<input type='text' name='requestmemo' id='requestmemo' th:value="'배송전 연락바랍니다.'" style="width:476px;"><br>
+			<label>이 름</label>　　　　<input type='text' name='toname' id='toname' th:value="${cus.cname}" required><br>
+			<label>휴대폰 번호</label>　 <input type='text' name='tophone' id='tophone' th:value="${cus.phone}" required><br>
+			<label>주 소</label>　　　<input type='text' name='toaddress' id='toaddress' th:value="${cus.address}" style="width:500px;" required><br>
+			<label>배송요청사항</label>　<input type='text' name='requestmemo' id='requestmemo' th:value="'배송전 연락바랍니다.'" style="width:476px;" required><br>
 		<p style="height:10px;">
 		
 		<div style='margin-top:25px; margin-bottom:15px; border-bottom:0.2px solid gray; width:80%'>구매 상품 목록</div>

@@ -290,6 +290,52 @@ function buynow()
 .starscore{font-family: 'YanoljaYacheR'; font-size:25px;}
 
 
+#iteminfo{
+	margin-top:50px; 
+	margin-bottom:50px;
+	width:350px;
+	padding-left:150px; 
+}
+
+#iteminfo>ul{
+	padding:0;
+}
+#infotitle{
+	padding-left:10px;
+	width:90px;
+	line-height:30px;
+	font-size:20px;	
+	float:left;
+}
+#infocontent{
+	padding-top:5px;
+	padding-left:25px;
+	width:450px;
+	line-height:30px;
+	font-size:15px;	
+}
+#buybox{
+	font-size:20px;
+}
+#getitems>button{
+	width:90px;
+	height:30px;
+	font-size:18px;
+	border:0px;
+	background-color: #d0e6e5;	
+	border:1px solid silver;
+}
+
+#amount{
+	width:90px;
+	height:30px;	
+	font-size:18px;
+	text-align:center;
+	background-color: #d0e6e5;
+	border:1px solid silver;
+}
+
+
 </style>
 </head>
 <body>
@@ -298,7 +344,7 @@ function buynow()
 	<div style='width:1200px; height:40px; margin:0 auto; background-color:#d0e6e5; position:sticky; top: 0; z-index: 2; text-align:center;'>
 		<a href="#iteminfo"><span class="selector">상품정보</span></a> <a href="#revlist"><span class="selector">리뷰목록</span></a> <a href="#qalist"><span class="selector">상품문의</span></a>
 	</div>
-<div style='width:900px; height:500px; margin:0 auto; z-index: 1; margin-top:70px; padding-bottom:50px; border-bottom:1px solid silver;'>
+<div style='width:1200px; height:500px; margin:0 auto; z-index: 1; margin-top:70px; padding-bottom:50px; border-bottom:1px solid silver; display:flex;'>
 	<div style="margin-top:50px; float:left; padding-left:100px;">	
 		 <div class="slideshow-container">	
 			<div class='mySlides fade' th:each="att , iStat:${drink.item.imgList}">
@@ -316,30 +362,43 @@ function buynow()
 			 </span>
 		  </div>
 	</div>	
-	<div id="iteminfo" style="margin-top:50px; margin-bottom:50px;width:280px; float:right;">
-		<div th:text="'상품번호 : '+${drink.item.itemcode}"></div>
-		<div th:text="'상품명 : '+${drink.item.name}"></div>
-		<div th:text="'가격 : '+${drink.item.price}+'원'"></div>
-		<div th:text="'브랜드 : '+${drink.item.brandname}"></div>
-		<div th:text="'주종 : '+${drink.item.type}"></div>
-		<div th:text="'도수 : '+${drink.item.alcohol}"></div>
-		<div th:text="'원산지 : '+${drink.item.producingarea}"></div>
-		<div th:text="'정보 : '+${drink.item.detailcontent}"></div>
-		<div th:text="'원산지 : '+${drink.item.material}"></div>
-		<div>
-			<span th:if='${drink.item.quantity>10}' th:text="'남은재고 '+${drink.item.quantity}+'개'"></span><br>
-			<span th:if='${1<=drink.item.quantity} and ${drink.item.quantity<=10}' th:text="'매진임박 남은수량 : '+${drink.item.quantity}+'개'" style='color:red;'></span><br>
-			<span th:if='${drink.item.quantity==0}' th:text="'매진'" style='color:gray;'></span><br>
+	<div id="iteminfo">
+		<div style="border-bottom:1px solid silver; padding-bottom:20px; font-size:25px;font-weight:bold; width:430px;">
+			<span th:text="'['+${drink.item.brandname}+']'"></span>　<span th:text="${drink.item.name}"></span>
 		</div>
-		<div>
+		<div style="width:430px; border-bottom:1px solid silver; display:flex; margin-bottom:20px;">
+			<ul id="infotitle">
+				<li>상품번호</li>
+				<li>가격</li>
+				<li>주종</li>
+				<li>도수</li>
+				<li>원산지</li>
+				<li>주원료</li>		
+				<li>남은수량</li>		
+			</ul>
+			<ul id="infocontent">
+				<li><span th:text="${drink.item.itemcode}"></span></li>
+				<li style="color:red; font-weight:bold;"><span th:text="${drink.item.price}+'원'"></span></li>
+				<li><span th:text="${drink.item.type}"></span></li>
+				<li><span th:text="${drink.item.alcohol}"></span></li>
+				<li><span th:text="${drink.item.producingarea}"></span></li>
+				<li><span th:text="${drink.item.material}"></span></li>
+				<li>
+					<span th:if='${drink.item.quantity>10}' th:text="${drink.item.quantity}+'개'"></span>
+					<span th:if='${1<=drink.item.quantity} and ${drink.item.quantity<=10}' th:text="'매진임박'+${drink.item.quantity}+'개'" style='color:red; font-weight:bold;'></span>
+					<span th:if='${drink.item.quantity==0}' th:text="'매진'" style='color:gray;'></span>
+				</li>							
+			</ul>	
+		</div>
+		<div id="buybox">
 			<form id='getitems' action="/drinks/buynow" method="post" th:if='${drink.item.quantity!=0}'>
 				<input type='hidden' name='itemcode' th:value="${drink.item.itemcode}">
 				<input type='hidden' id='price' name='price' th:value="${drink.item.price}">
 				<input type='hidden' name='name' th:value="${drink.item.name}">
 				<input type='hidden' name='vnum' th:value="${drink.item.vnum}">				
-				수량 : <input type='number' id='amount' name='amount' step='1' th:max=${drink.item.quantity} min='1' value='1' onchange='setprice();'><p>
+				주문수량 　 <input type='number' id='amount' name='amount' step='1' th:max=${drink.item.quantity} min='1' value='1' onchange='setprice();' onkeypress="return (event.charCode < 48 || event.charCode > 57)" required><p>
 				<p id='result'></p>
-				<button type='submit'>구매하기</button>
+				<button type='submit'>구매하기</button>　
 				<button type='button' onclick='addcart()'>장바구니</button>
 			</form>		
 		</div>
@@ -377,6 +436,10 @@ function buynow()
 	<div th:each="att:${drink.item.imgList}" style="margin-top:50px;">
 		<img style="width:500px; height:500px; border:1px solid silver" th:src="@{'/'+${drink.item.name}+'/'+${att.fname}}">
 	</div>
+	<div style="text-align:center; margin-top:50px;">
+		<h1>제품 소개</h1>
+		<span th:text="${drink.item.detailcontent}"></span>	
+	</div>	
 </div>
 
 <p>
