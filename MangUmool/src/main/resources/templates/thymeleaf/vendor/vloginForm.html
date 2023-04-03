@@ -32,13 +32,24 @@
 				},
 				error : function(xhr,status,err)
 				{
-					alert(err);	
+					alert("입력하신 정보와 일치하는 판매자가 없습니다.");	
 				}
 				});		
 		}
 </script>
 <style>
-#loginInputForm{width:300px; height:300px; margin:auto; top:10px; position:relative; border:10px double #3D1B14; 
+@font-face {
+    font-family: 'OTWelcomeRA';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/OTWelcomeRA.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body{
+	 font-family: 'OTWelcomeRA';
+}
+
+#loginInputForm{width:300px; height:230px; margin:auto; top:10px; position:relative; border:10px double #3D1B14; 
 				border-radius:0.8em; text-align:center; padding-top:50px;}
 h1{text-align:center; margin-top:-20px;margin-bottom:50px; }
 #loginned{margin-bottom:30px;}
@@ -52,8 +63,8 @@ h1{text-align:center; margin-top:-20px;margin-bottom:50px; }
 <div id="loginInputForm">
 	<h1>판매자 로그인</h1>
 	<form id='loginned' name='loginned'>
-		<label>I D</label>　<input type='text' id='uid' name='uid' value='vendi'> <p>
-		<label>PWD</label>　<input type='password' id='pwd' name='pwd' value='1234'> <p>
+		<label>I D</label>　<input type='text' id='uid' name='uid' value='vendi' required> <p>
+		<label>PWD</label>　<input type='password' id='pwd' name='pwd' value='1234' required> <p>
 	</form>
 	<button type='button' onclick='loginn();'>로그인</button>
 	<a href="/user/vendor/join"><button type='button'>회원가입</button></a>

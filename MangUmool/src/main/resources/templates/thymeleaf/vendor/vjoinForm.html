@@ -16,7 +16,7 @@
 			return false;
 		}	
 		var serData = $('#joinn').serialize();             	
-
+		
 		$.ajax({
 				url : '/user/vendor/join',	
 				method : 'post',
@@ -38,7 +38,7 @@
 				},
 				error : function(xhr,status,err)
 				{
-					alert(err);	
+					alert("입력정보를 다시 확인해주세요.");	
 				}
 				});		
 		}
@@ -106,7 +106,16 @@
 </script>
 </head>
 <style>
+@font-face {
+    font-family: 'OTWelcomeRA';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/OTWelcomeRA.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
 
+body{
+	 font-family: 'OTWelcomeRA';
+}
 #vendor_logo_img{width:112px; margin:auto; margin-top:50px;}
 #joinForm{width:400px; height:390px; margin:auto; top:10px; position:relative; border:10px double #3D1B14; 
 				border-radius:0.8em; text-align:center; padding-top:50px;}
@@ -152,14 +161,14 @@ h1{text-align:center; margin-top:-20px;margin-bottom:50px;}
 						<button type="button" class='joinboxbtn' onclick="idCheck()">ID 중복체크</button>				
 						<input type='hidden' id='idchecked' value='1'>
 					</li>
-					<li><input type='password' id='pwd' name='pwd' value='1234'></li>
-					<li><input type='text' id='com_number' name='com_number' value='2312132'></li>
-					<li><input type='text' id='brandname' name='brandname' value='MangWooMul'></li>
-					<li><input type='text' id='ceoname' name='ceoname' value='박지환'></li>
-					<li><input type='text' id='website' name='website' value='www.ddd.com'></li>
-					<li><input type='text' id='phone' name='phone' value='01042323296'></li>
+					<li><input type='password' id='pwd' name='pwd' value='1234' required></li>
+					<li><input type='text' id='com_number' name='com_number' value='2312132' required></li>
+					<li><input type='text' id='brandname' name='brandname' value='MangWooMul' required></li>
+					<li><input type='text' id='ceoname' name='ceoname' value='박지환' required></li>
+					<li><input type='text' id='website' name='website' value='www.ddd.com' required></li>
+					<li><input type='text' id='phone' name='phone' value='01042323296' required></li>
 					<li>
-					<input type='text' id='address' name='address' value=''>
+					<input type='text' id='address' name='address' value='' required>
 					<button type="button" class='joinboxbtn' onclick="openaddressbox()">주소찾기</button>
 					</li>
 				</ul>		

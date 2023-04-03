@@ -4,8 +4,14 @@
 <meta charset="utf-8">
 <title>VENDORHOME</title>
 <style>
+@font-face {
+    font-family: 'OTWelcomeRA';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/OTWelcomeRA.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
 
-body,html{height: 100vh; width:100%;margin:0; position:relative;  
+body,html{height: 100vh; width:100%;margin:0; position:relative; font-family: 'OTWelcomeRA'; 
 	background-color:white}  
 #vendorNav{ height: 100vh; width: 200px; border-right:5px double gray; float:left; background:linear-gradient(to right,#D9E6FF,white);  color:#465578;}
 #vendorNavBar{list-style: none; line-height: 50px; margin-top:50px; padding-left:0px; font-size:17px;}
@@ -30,9 +36,9 @@ body,html{height: 100vh; width:100%;margin:0; position:relative;
 <div id="vendorNav">
 	<div id="vendor_logo_img">
 		<a style="margin-left:40px;" href='/vendor/orderlist'><img style="width:110px;height:110px" src="/mangwoomul.png"></a>	<p>
-		<span style="margin-left:50px; font-size:21px; font-weight:bold;" th:text="${session.vid}+'님'"></span><br>
-		<span style="margin-left:50px; font-size:21px; font-weight:bold;" th:text="'환영합니다'"></span><br>
-		 <span style="margin-left:70px;"><a href='/user/vendor/logout'>LOGOUT</a></span>	
+		<span style="margin-left:30px; font-size:21px; font-weight:bold;" th:text="${session.vid}+'님'"></span><br>
+		<span style="margin-left:50px; font-size:21px; font-weight:bold;" th:text="'환영합니다'"></span><p>
+		<span style="margin-left:60px;"><a href='/user/vendor/logout'>LOGOUT</a></span>	
 	</div>
 
     <ul id="vendorNavBar">                

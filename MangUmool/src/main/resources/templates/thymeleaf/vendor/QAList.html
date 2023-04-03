@@ -112,7 +112,7 @@ h1{
 				</div>
 			</details>			
 		</div>
-		<div style="text-align:center; margin:auto; width:400px; margin-left:200px;">		
+		<div style="text-align:center; margin:auto; width:400px; margin-left:150px; margin-top:50px;">		
 			<span th:if="${end!=0}" style="font-size:32px; padding-left:20px;" th:each="page:${#numbers.sequence(1,end)}">
 				<a style="text-decoration: none; color: gray;" th:href="@{'/vendor/getQA'(pg=${page})}">
 					<span th:if="${page}==${pg}" style="color:red;" th:text="${page}"></span>

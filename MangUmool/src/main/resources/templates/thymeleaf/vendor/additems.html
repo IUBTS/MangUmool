@@ -172,7 +172,7 @@ $(function(){
 			</ul>
 			<ul>
 				<li>[[${session.vid}]]</li>
-				<li><span><input name='name' id='name' type='text' placeholder='상품명' value='seoul'></span></li>
+				<li><span><input name='name' id='name' type='text' placeholder='상품명' value='seoul' required></span></li>
 				<li>
 					<span>
 						<select name='type'>
@@ -185,25 +185,25 @@ $(function(){
 						</select>	
 					</span>
 				</li>
-				<li><span><input name='alcohol' type='number' step='0.01' placeholder='도수' value='20'></span></li>
-				<li><span><input name='material' type='text' placeholder='주원료' value='쌀'></span></li>
-				<li><span><input name='price' type='number' min='500' placeholder='가격' value='500'></span></li>
-				<li><span><input name='quantity' type='number' placeholder='재고량' value='200'></span></li>
-				<li><span><input name='brandname' type='text' placeholder='브랜드명' value='진로'></span></li>
-				<li><span><input name='producingarea' type='text' placeholder='원산지' value='서울'></span></li>
+				<li><span><input name='alcohol' type='number' step='0.01' placeholder='도수' value='20' min='1' max='100' required></span></li>
+				<li><span><input name='material' type='text' placeholder='주원료' value='쌀' required></span></li>
+				<li><span><input name='price' type='number' min='500' placeholder='가격' value='500' required></span></li>
+				<li><span><input name='quantity' type='number' placeholder='재고량' value='200' required></span></li>
+				<li><span><input name='brandname' type='text' placeholder='브랜드명' value='진로' required></span></li>
+				<li><span><input name='producingarea' type='text' placeholder='원산지' value='서울' required></span></li>
 			</ul>			
 		</div>		
 		<p>		
 		<div class='b_info2'>	
 			<div class='b_info2_left'><span><label>상세정보</label></span></div>
-			<div class='b_info2_right'><textarea name='detailcontent' type='text' placeholder='상세정보' cols='75' rows='10'>제품의 정보를 입력하세요</textarea></div>
+			<div class='b_info2_right'><textarea name='detailcontent' type='text' placeholder='상세정보' cols='70' rows='10' required>제품의 정보를 입력하세요</textarea></div>
 		</div>
 		<div id="preview" style="border:5px double gray; height:180px; margin-top:10px;margin-bottom:10px;"></div>
 		<div class='a_info'>			
 				<label>썸네일이미지첨부</label>
-				<input type="file" name="thumimg"><br>	
+				<input type="file" name="thumimg" required><br>	
 			    <label>이미지첨부</label>　
-				<input type="file" name="files" multiple="multiple">
+				<input type="file" name="files" multiple="multiple" required>
 		</div>
 		
 	<button style="width:100px; height:33px; font-size:20px; float:right;" type="button" id='btnUpload'>상품등록</button>

@@ -5,7 +5,14 @@
 <title></title>
 <link rel="shortcut icon" type="image/x-icon" href="static/favicon.ico">
 <style>
-body{width:100%; margin:auto;}
+@font-face {
+    font-family: 'OTWelcomeRA';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/OTWelcomeRA.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body{width:100%; margin:auto; font-family: 'OTWelcomeRA';}
 #nav{width:1200px;  margin:auto; height:170px; background-color:#F7F5EE ; }
 a {text-decoration:none;
 	color: black;}
@@ -14,7 +21,7 @@ a {text-decoration:none;
 <body>	
 
 <div id='nav'>
-	<div style="text-align:right;font-size:15px; color:gray; font-weight:bold; background-color:#FFEEE0; ;width:100% ; margin-top:0; height:25px; padding-top:5px;">
+	<div style="text-align:right;font-size:15px; color:gray; font-weight:bold; background-color:#FFEEE0; ;width:100% ; margin-top:0; height:25px; padding-top:10px;">
 		<span th:if="${session.cnum!=null}" th:text="${session.nickname}+'님 환영합니다.'"></span>
 		<a th:if="${session.cnum!=null}" href='/user/customer/logout'> 　LOGOUT　　</a>
 		<a th:unless="${session.cnum!=null}" href='/user/customer/login'> 로그인 </a>

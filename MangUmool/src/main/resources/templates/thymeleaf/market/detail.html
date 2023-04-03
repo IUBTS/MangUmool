@@ -91,6 +91,13 @@ function addcart()
 
 function buynow()
 {		
+	var cnum= '[[${session.cnum}]]';
+	if(cnum=="")
+	{
+		alert('로그인이 필요합니다.');
+		location.href="/user/customer/login";
+	}
+	
 	var serData = $('#getitems').serialize();
 	$.ajax({
 			url : '/drinks/buynow',	
@@ -171,7 +178,16 @@ function buynow()
 </script>
 
 <style>
+@font-face {
+    font-family: 'OTWelcomeRA';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2110@1.0/OTWelcomeRA.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+}
 
+body{
+	 font-family: 'OTWelcomeRA';
+}
 #drinkimg { 
 	width: 400px; height: 400px; object-fit: contain; z-index: 1;}
 
@@ -304,11 +320,11 @@ function buynow()
 	padding-left:10px;
 	width:90px;
 	line-height:30px;
-	font-size:20px;	
+	font-size:18px;	
 	float:left;
 }
 #infocontent{
-	padding-top:5px;
+	padding-top:4px;
 	padding-left:25px;
 	width:450px;
 	line-height:30px;

@@ -63,7 +63,7 @@ h1{
 			<summary >
 		
 				취소요청 <span th:if="${l.orderItem.confirm==4}" th:text="'승인완료'" style="color: red; float:right ; padding-right:100px;"></span> <br> 
-				<div style="border-top:5px double gray; width:600px;">
+				<div style="border-top:5px double gray; width:600px; margin-top:10px; padding-top:10px;">
 				취소주문 ITEMCODE : <span th:text="${l.cancle.itemcode}"></span>
 				결제주문번호 : <span th:text="${l.cancle.onum}"></span><br>
 				상품주문번호 :  <span th:text="${l.cancle.oinum}"></span><br>
@@ -74,7 +74,7 @@ h1{
 			</summary>
 			
 			<div style="margin-top:20px; ">주문 정보</div>
-			<div style="border-top:5px double gray;  width:600px;">
+			<div style="border-top:5px double gray;  width:600px; margin-top:10px; padding-top:10px;">
 			제품명 <span th:text="${l.orderItem.name}"></span><br>
 			주문수량 <span th:text="${l.orderItem.amount}"></span><br>
 					
