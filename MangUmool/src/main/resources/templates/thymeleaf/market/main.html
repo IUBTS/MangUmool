@@ -148,7 +148,7 @@ body{
 </div>
 
 
-<div style="text-align:center; color:gray; ">
+<div th:if="${session.nickname!=null}" style="text-align:center; color:gray;">
 	<h2>[[${session.nickname}]]님 이런 상품은 어때요?</h2>
 </div>
 

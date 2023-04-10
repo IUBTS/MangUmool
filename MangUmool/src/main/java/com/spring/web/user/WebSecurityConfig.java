@@ -86,8 +86,8 @@ public class WebSecurityConfig
               
                
              .and()   // 디폴트 로그아웃 URL = /logout
-             .logout().logoutRequestMatcher(new AntPathRequestMatcher("/logout")) //로그아웃 요청시 URL
-             .logoutSuccessUrl("/sec/loginForm?logout=T")
+             .logout().logoutRequestMatcher(new AntPathRequestMatcher("/user/customer/logout")) //로그아웃 요청시 URL
+             .logoutSuccessUrl("/drinks/")
              .invalidateHttpSession(true) 
              .deleteCookies("JSESSIONID")
              .permitAll()
