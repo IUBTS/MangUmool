@@ -26,7 +26,6 @@
 					}
 					else if(res.permit==1)
 					{
-						alert(res.msg);
 						location.href='/user/vendor/waitingJoin';
 					}
 				},
@@ -63,8 +62,8 @@ h1{text-align:center; margin-top:-20px;margin-bottom:50px; }
 <div id="loginInputForm">
 	<h1>판매자 로그인</h1>
 	<form id='loginned' name='loginned'>
-		<label>I D</label>　<input type='text' id='uid' name='uid' value='vendi' required> <p>
-		<label>PWD</label>　<input type='password' id='pwd' name='pwd' value='1234' required> <p>
+		<label>I D</label>　<input type='text' id='uid' name='uid' required> <p>
+		<label>PWD</label>　<input type='password' id='pwd' name='pwd' required> <p>
 	</form>
 	<button type='button' onclick='loginn();'>로그인</button>
 	<a href="/user/vendor/join"><button type='button'>회원가입</button></a>

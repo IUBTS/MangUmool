@@ -14,9 +14,7 @@
 		var amount = $('#amount'+index).val();
 		var itemcode = $('#itemcode'+index).val();
 		var delicomp = $('#delicomp'+index).val();
-		
-		alert('송번'+deliverycode+'주문넘'+oinum+'수량'+amount+'템코드'+itemcode+'택배사'+delicomp);
-		
+
 		if(deliverycode==""||deliverycode==null)
 		{
 			alert('송장번호를 입력하셔야 주문확인이 완료됩니다.');
@@ -128,6 +126,8 @@ h1{
 					<span th:case="0">배송 상태 입력 대기중</span>
 					<span th:case="1">출고</span>
 					<span th:case="2">배송 완료</span>
+					<span th:case="3">취소 신청중</span>
+					<span th:case="4">취소 완료</span>
 				</span><br>
 		<span th:if="${info.oitem.deliverycode!=0}">
 			택배사:　	<span th:switch="${info.oitem.delicomp}">					
@@ -150,7 +150,7 @@ h1{
 				<input type='hidden' th:id="'oinum'+${infoStat.index}" name='oinum' th:value='${info.oitem.oinum}'>
 				<input type='hidden' th:id="'itemcode'+${infoStat.index}" name='itemcode' th:value='${info.oitem.itemcode}'>
 				<input type='hidden' th:id="'amount'+${infoStat.index}" name='amount' th:value='${info.oitem.amount}'>
-				송장번호:　<input type='number' th:id="'deliverycode'+${infoStat.index}" name='deliverycode' value="6865275296876">
+				송장번호:　<input type='number' th:id="'deliverycode'+${infoStat.index}" name='deliverycode' required>
 				택배사 : <select th:id="'delicomp'+${infoStat.index}" name="delicomp">
 						    <option value="kr.epost">우체국택배</option>
 						    <option value="kr.cjlogistics">CJ대한통운</option>
