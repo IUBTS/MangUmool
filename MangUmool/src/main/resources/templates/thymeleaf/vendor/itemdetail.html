@@ -52,7 +52,6 @@ function addimgon()
 function editInfo()
 {			
 	var serData = $('#editForm').serialize(); 
-	alert(serData);
 
 	$.ajax({
 			url : '/vendor/updateItem',	
@@ -265,17 +264,17 @@ $("input[type='file']").change(function(e){
 			
 		<form id="editForm">		
 			<ul id='itext' style="line-height:24px;">
-				<li class='infotext'><span th:text="${items.item.itemcode}"></span><input type='hidden' name='itemcode' th:value='${items.item.itemcode}'></li>
+				<li class='infotext'><span th:text="${items.item.itemcode}"></span><input type='hidden' name='itemcode' th:value='${items.item.itemcode}' required></li>
 				<li class='infotext'><span th:text="${items.item.name}"></span></li>
 				<li class='infotext'><span th:text="${items.item.brandname}"></span></li>
-				<li class='infotext'><input type='number' name='quantity' th:value="${items.item.quantity}"></span></li>
+				<li class='infotext'><input type='number' name='quantity' th:value="${items.item.quantity}" required ></span></li>
 				<li class='infotext'><span th:text="${items.item.type}"></span></li>
-				<li class='infotext'><input type='number' step='0.01' name='alcohol' th:value="${items.item.alcohol}"></span></li>
-				<li class='infotext'><input type='number' name='price' th:value="${items.item.price}"></span></li>
-				<li class='infotext'><input type='text' name='producingarea' th:value="${items.item.producingarea}"></span></li>
+				<li class='infotext'><input type='number' step='0.01' name='alcohol' th:value="${items.item.alcohol}" required></span></li>
+				<li class='infotext'><input type='number' name='price' th:value="${items.item.price}" required></span></li>
+				<li class='infotext'><input type='text' name='producingarea' th:value="${items.item.producingarea}" required></span></li>
 				<li class='infotext'><span th:text="${items.item.material}"></span></li>
 				<li class='infotext'><span th:text="${items.item.regdate}"></span></li>
-				<li class='infotext'><input type='text' name='detailcontent' th:value="${items.item.detailcontent}"></span></li> 
+				<li class='infotext'><input type='text' name='detailcontent' th:value="${items.item.detailcontent}" required></span></li> 
 			</ul>	
 		</form>
 		<div style="text-align:center; margin-top:20px;" >
